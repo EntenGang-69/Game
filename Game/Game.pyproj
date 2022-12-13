@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{aea40acc-a80c-4562-bdcb-2faedaf1f01c}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>setup.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>MSBuild|venv|$(MSBuildProjectFullPath)</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="assets\logos\cum_inc_logo.png" />
+    <Content Include="assets\logos\vapor_logo.png" />
+    <Content Include="build\exe.win-amd64-3.10\lib\customtkinter\assets\icons\CustomTkinter_icon_Windows.ico" />
+    <Content Include="build\exe.win-amd64-3.10\lib\pydoc_data\_pydoc.css" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images\earth.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images\earthmenu.png" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images\earthris.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images\ouster.png" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images\tcllogo.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\logo100.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\logo64.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\logoLarge.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\logoMed.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\pwrdLogo100.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\pwrdLogo150.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\pwrdLogo175.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\pwrdLogo200.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\pwrdLogo75.gif" />
+    <Content Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images\tai-ku.gif" />
+    <Content Include="CustomTkinter-master\customtkinter\assets\icons\CustomTkinter_icon_Windows.ico" />
+    <Content Include="CustomTkinter-master\documentation_images\complex_example_dark_Windows.png" />
+    <Content Include="CustomTkinter-master\documentation_images\complex_example_light_macOS.png" />
+    <Content Include="CustomTkinter-master\documentation_images\CustomTkinter_logo_dark.png" />
+    <Content Include="CustomTkinter-master\documentation_images\CustomTkinter_logo_light.png" />
+    <Content Include="CustomTkinter-master\documentation_images\image_example_dark_Windows.png" />
+    <Content Include="CustomTkinter-master\documentation_images\single_button_macOS.png" />
+    <Content Include="CustomTkinter-master\requirements.txt" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\add_user_dark.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\add_user_light.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\bg_gradient.jpg" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\chat_dark.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\chat_light.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\CustomTkinter_logo_single.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\home_dark.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\home_light.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\image_icon_light.png" />
+    <Content Include="CustomTkinter-master\test\manual_integration_tests\test_images\large_test_image.png" />
+    <Content Include="HELP.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="build\lib\Launcher.py" />
+    <Compile Include="build\lib\Vapor.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\ctk_input_dialog.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\ctk_tk.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\ctk_toplevel.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\appearance_mode\appearance_mode_base_class.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\appearance_mode\appearance_mode_tracker.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\appearance_mode\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_rendering\ctk_canvas.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_rendering\draw_engine.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_rendering\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_widget_classes\ctk_base_class.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_widget_classes\dropdown_menu.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\core_widget_classes\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_button.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_checkbox.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_combobox.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_entry.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_frame.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_label.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_optionmenu.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_progressbar.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_radiobutton.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_scrollbar.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_segmented_button.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_slider.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_switch.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_tabview.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\ctk_textbox.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\font\ctk_font.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\font\font_manager.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\font\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\image\ctk_image.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\image\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\scaling\scaling_base_class.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\scaling\scaling_tracker.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\scaling\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\theme\theme_manager.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\theme\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\utility\utility_functions.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\utility\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\widgets\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\windows\__init__.py" />
+    <Compile Include="CustomTkinter-master\customtkinter\__init__.py" />
+    <Compile Include="CustomTkinter-master\examples\complex_example.py" />
+    <Compile Include="CustomTkinter-master\examples\example_background_image.py" />
+    <Compile Include="CustomTkinter-master\examples\image_example.py" />
+    <Compile Include="CustomTkinter-master\examples\simple_example.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\simple_example_standard_tkinter.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_all_widgets_with_colors.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_button_antialiasing.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_configure_dimensions.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_behavior\test_ctk_appearance_mode_change.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_behavior\test_ctk_iconify_at_beginning.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_behavior\test_ctk_withdraw_at_beginning.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_behavior\test_ctk_zoomed_state.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel_behavior\test_ctk_toplevel_appearance_mode_change.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel_behavior\test_ctk_toplevel_iconify_at_beginning.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel_behavior\test_ctk_toplevel_withdraw_at_beginning.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel_behavior\test_ctk_toplevel_zoomed_state.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_filedialog.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_font.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_images.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_optionmenu_combobox.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_progressbar_intermediate_mode.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_scaling\test_scaling_simple_place.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_scaling\test_scaling_toplevel_pack.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_segmented_button.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_states.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_string_dialog.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_tabview.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_textbox.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_theme_colors.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_ttk_frames.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_variables.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_vertical_widgets.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\test_window_geometry.py" />
+    <Compile Include="CustomTkinter-master\test\manual_integration_tests\text_entry_placeholder.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\test_all.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\test_ctk.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\test_ctk_button.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\test_ctk_entry.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\test_ctk_toplevel.py" />
+    <Compile Include="CustomTkinter-master\test\unit_tests\__init__.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="test.py" />
+    <Compile Include="Vapor.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\" />
+    <Folder Include="assets\logos" />
+    <Folder Include="build\" />
+    <Folder Include="build\exe.win-amd64-3.10\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\customtkinter\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\customtkinter\assets\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\customtkinter\assets\icons" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\pydoc_data" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\tcltk\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\demos\images" />
+    <Folder Include="build\exe.win-amd64-3.10\lib\tcltk\tk8.6\images" />
+    <Folder Include="build\lib" />
+    <Folder Include="CustomTkinter-master" />
+    <Folder Include="CustomTkinter-master\customtkinter" />
+    <Folder Include="CustomTkinter-master\customtkinter\assets\" />
+    <Folder Include="CustomTkinter-master\customtkinter\assets\icons" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\appearance_mode" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\core_rendering" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\core_widget_classes" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\font" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\image" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\scaling" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\theme" />
+    <Folder Include="CustomTkinter-master\customtkinter\windows\widgets\utility" />
+    <Folder Include="CustomTkinter-master\documentation_images" />
+    <Folder Include="CustomTkinter-master\examples" />
+    <Folder Include="CustomTkinter-master\test\" />
+    <Folder Include="CustomTkinter-master\test\manual_integration_tests" />
+    <Folder Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_behavior" />
+    <Folder Include="CustomTkinter-master\test\manual_integration_tests\test_ctk_toplevel_behavior" />
+    <Folder Include="CustomTkinter-master\test\manual_integration_tests\test_images" />
+    <Folder Include="CustomTkinter-master\test\manual_integration_tests\test_scaling" />
+    <Folder Include="CustomTkinter-master\test\unit_tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="venv\">
+      <Id>venv</Id>
+      <Description>venv (Python 3.10 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <Version>3.10</Version>
+      <Architecture>X64</Architecture>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

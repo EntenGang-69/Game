@@ -1,0 +1,9 @@
+// Build .exe via cmd (open CMD in project folder)
+python setup.py build
+start build\exe.win-amd64-3.10\Vapor.exe
+
+// GitHub Repository of CustumTkinter
+https://github.com/TomSchimansky/CustomTkinter
+
+// Tutorial CustomTkinter - GUI Python
+https://www.youtube.com/watch?v=iM3kjbbKHQU
