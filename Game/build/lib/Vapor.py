@@ -72,7 +72,7 @@ class App(customtkinter.CTk):
         self.games_frame.grid_columnconfigure(5, weight=1)
         self.games_frame.grid_rowconfigure((1,2), weight=1)
 
-        self.games_label = customtkinter.CTkLabel(self.games_frame, text="Coming Soon", font=customtkinter.CTkFont(size=16, weight="bold"))
+        self.games_label = customtkinter.CTkLabel(self.games_frame, text="Available Games", font=customtkinter.CTkFont(size=16, weight="bold"))
         self.games_label.grid(row=0, column=0, padx=10, pady=10)
 
         self.cookie_clicker = customtkinter.CTkImage(Image.open(self.current_path + "/assets/Game_Preview/cookie_clicker.jpg"), size=(140, 140))
