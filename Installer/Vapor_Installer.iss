@@ -24,6 +24,10 @@ DisableProgramGroupPage=no
 
 [Files]
 Source: "assets\*"; DestDir: "{app}\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "CookieClicker\*"; DestDir: "{app}\CookieClicker"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "images\*"; DestDir: "{app}\images"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "venv\*"; DestDir: "{app}\venv"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Font\*"; DestDir: "{app}\Font"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "python3.dll"; DestDir: "{app}"
 Source: "python310.dll"; DestDir: "{app}"
