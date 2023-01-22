@@ -1,27 +1,28 @@
 import pygame
+import sys
 
 pygame.init()
 
-window_length = 1750
-window_height = 1000
-window = pygame.display.set_mode((window_length, window_height))
+window_height = 420
+window_length = window_height/9*16
+window = pygame.display.set_mode((window_length, window_height), pygame.RESIZABLE, pygame.SCALED)
 
-background_img = pygame.image.load('images/grey.jpg')
+background_img = pygame.image.load('CookieClicker/images/grey.jpg')
 
-cookie_img = pygame.image.load('images/keks.png')
+cookie_img = pygame.image.load('CookieClicker/images/keks.png')
 
 '''Buildings'''
-turbo = pygame.image.load('images/turbo.png')
-bardello = pygame.image.load('images/bardello.png')
-slaves = pygame.image.load('images/slaves.png')
-chump_hat = pygame.image.load('images/chump_hat.png')
-nuclear_reactor = pygame.image.load('images/nuclearreactor.png')
+turbo = pygame.image.load('CookieClicker/images/turbo.png')
+bardello = pygame.image.load('CookieClicker/images/bardello.png')
+slaves = pygame.image.load('CookieClicker/images/slaves.png')
+chump_hat = pygame.image.load('CookieClicker/images/chump_hat.png')
+nuclear_reactor = pygame.image.load('CookieClicker/images/nuclearreactor.png')
 
 '''Details'''
 
-upgrades_bg = pygame.image.load('images/black.jpg')
-leiste = pygame.image.load('images/leiste.png')
-building_display_background = pygame.image.load('images/grey.jpg')
+upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
+leiste = pygame.image.load('CookieClicker/images/leiste.png')
+building_display_background = pygame.image.load('CookieClicker/images/grey.jpg')
 
 
 '''Colors'''
@@ -58,8 +59,8 @@ class ScoreDisplay():
         self.height = 100
 
     def draw(self):
-        font = pygame.font.Font('Font/SemiSweet-Bold-italic.ttf', 24)
-        small_font = pygame.font.Font('Font/Kavoon-Regular.ttf', 26)
+        font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 24)
+        small_font = pygame.font.Font('CookieClicker/Font/Kavoon-Regular.ttf', 26)
 
         SCORE = small_font.render('{} cookies'.format(format_number ( int(user.score) )), True, WHITE)
         CPS = font.render('per second: {}'.format(int(user.cps)), True, WHITE)
@@ -89,8 +90,8 @@ class Building:
         return self.base_cost * self.increase_per_purchase**(self.quantity)
 
     def draw(self, solid = True):
-        store_cost_font = pygame.font.Font('Font/SemiSweet-Bold-italic.ttf', 14)
-        store_quantity_cost = pygame.font.Font('Font/SemiSweet-Bold-italic.ttf', 20)
+        store_cost_font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 14)
+        store_quantity_cost = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
 
 
 
@@ -146,14 +147,14 @@ class Player:
 
 
 '''pos1 = x, pos2 = y'''
-cookie = MainCookie(550, 300)
+cookie = MainCookie(300, 240)
 
-score_display = ScoreDisplay(630, 0)
+score_display = ScoreDisplay(360, 0)
 user = Player()
 
 '''Buildings'''
-store_y = 412
-store_x = 1145
+store_y = 20
+store_x = 830
 
 slaves = Building("Slaves", store_x, store_y , slaves, slaves, base_cost=15, increase_per_purchase=1.15, cps=0.1)
 Bardell = Building('Turbo', store_x+200*1, store_y, turbo, turbo, base_cost=125, increase_per_purchase=1.18, cps=100)
@@ -179,13 +180,16 @@ def format_number(n):
             n = '{:.2f} million'.format(n / 1000000)
     return n
 
+for event in pygame.event.get():
+    if event.type == pygame.MOUSEWHEEL:
+        print(event.x, event.y)
 
 def draw():
     '''Draw Background'''
     window.blit(background_img, (0,0))
 
-    window.blit(upgrades_bg, (1130, 0))
-    window.blit(leiste, (1120, 0))
+    window.blit(upgrades_bg, (810, 0))
+    window.blit(leiste, (800, 0))
 
     '''Draw Cookie & ScoreDisplay'''
 
