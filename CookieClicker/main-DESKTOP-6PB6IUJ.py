@@ -14,11 +14,11 @@ background_img = pygame.image.load('CookieClicker/images/grey.jpg')
 cookie_img = pygame.image.load('CookieClicker/images/keks.png')
 
 '''cards'''
-# turbo = pygame.image.load('CookieClicker/images/turbo.png')
-# bardello = pygame.image.load('CookieClicker/images/bardello.png')
-# slaves = pygame.image.load('CookieClicker/images/slaves.png')
-# chump_hat = pygame.image.load('CookieClicker/images/chump_hat.png')
-# nuclear_reactor = pygame.image.load('CookieClicker/images/nuclearreactor.png')
+turbo = pygame.image.load('CookieClicker/images/turbo.png')
+bardello = pygame.image.load('CookieClicker/images/bardello.png')
+slaves = pygame.image.load('CookieClicker/images/slaves.png')
+chump_hat = pygame.image.load('CookieClicker/images/chump_hat.png')
+nuclear_reactor = pygame.image.load('CookieClicker/images/nuclearreactor.png')
 
 '''Details'''
 upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
@@ -31,18 +31,6 @@ BLACK = (0, 0, 0)
 GRAY = (155, 155, 155)
 GREEN = (0, 255, 0)
 BLUE = (51, 90, 144)
-
-# CUSTOM CURSOR SETUP
-#
-# import img
-custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png')
-cursor_size = (int(8)), (int(8))
-# hit point
-hit_point = ( int( custom_default_cursor_img.get_width() * 0.5 ) ), (int( custom_default_cursor_img.get_height() * 0.1) )
-# replace cursor
-tuple = custom_default_cursor_img.get_rect()
-pygame.mouse.set_cursor(cursor_size, hit_point, tuple, tuple)
-
 
 class MainCookie:
     def __init__(self, x_pos_cookie, y_pos_cookie, x_size_cookie):
@@ -80,14 +68,15 @@ class ScoreDisplay():
         window.blit(SCORE, (SCORE.get_rect( center=( int(x_pos_score), int(y_pos_score) ) )))
         window.blit(CPS, (CPS.get_rect(center=(int(x_pos_score), int(y_pos_score)+20 ) )))
 class card:
-    def __init__(self, name, index_x, index_y, image, base_cost, increase_per_purchase, cps):
+    def __init__(self, name, index_x, index_y, image, icon, base_cost, increase_per_purchase, cps):
         self.name = name
         self.index_x = index_x
         self.index_y = index_y
         self.length = 200
         self.height = 280
 
-        self.image = pygame.transform.scale(image, (self.length, self.height))
+        self.image = image
+        self.icon = icon
         self.base_cost = base_cost
         self.increase_per_purchase = increase_per_purchase
         self.cps = cps
@@ -106,20 +95,22 @@ class card:
     def draw(self, card_index_x, card_index_y, solid = True):
         store_cost_font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 14)
         store_quantity_cost = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
+
+        icon = self.image
         cost = store_cost_font.render('{}'.format( format_number(int(self.getTotalCost()) ) ), True, GREEN)
         cost_length = cost.get_rect().width
         quantity = store_quantity_cost.render('{}'.format(self.quantity), True, BLUE)
         quantity_length = quantity.get_rect().width
 
         if solid == False:
-            self.image.set_alpha(100)
+            icon.set_alpha(100)
         else:
-            self.image.set_alpha(255)
+            icon.set_alpha(255)
         pos_x = x_pos_store + (card_index_x * (self.length + 10))
         pos_y = y_pos_store + (card_index_y * (self.height + 10))
         self.card_index_x = card_index_x
         self.card_index_y = card_index_y
-        window.blit(self.image, (pos_x, pos_y))
+        window.blit(icon, (pos_x, pos_y))
         window.blit(cost, (pos_x + 170 - cost_length, pos_y + 10))
         window.blit(quantity, (pos_x + self.length -45 - quantity_length, pos_y + self.height -47))
 
@@ -166,34 +157,14 @@ user = Player()
 store_y = 20
 store_x = 830
 
-# slaves = card("Slaves", 0, 0 , slaves, slaves, base_cost=15, increase_per_purchase=1.15, cps=1)
-# Turbo = card('Turbo', 1, 0, turbo, turbo, base_cost=100, increase_per_purchase=1.18, cps=20)
-# Bardell1 = card('Bardelli', 2, 0, bardello, bardello, base_cost=2500, increase_per_purchase=1.185, cps=105)
-# chump_hat = card('Chumphat', 0, 1, chump_hat, chump_hat, base_cost=80000, increase_per_purchase=1.15, cps=1000)
-# nuclear_reactor = card('Nuclear-Reactor', 1, 1, nuclear_reactor, nuclear_reactor, base_cost=1000000, increase_per_purchase=3.15, cps=1000)
-# Bardell4 = card('Bardelli', 2, 1, bardello, bardello, base_cost=1000000, increase_per_purchase=300.15, cps=10000)
+slaves = card("Slaves", 0, 0 , slaves, slaves, base_cost=15, increase_per_purchase=1.15, cps=0.1)
+Bardell = card('Turbo', 1, 0, turbo, turbo, base_cost=125, increase_per_purchase=1.18, cps=100)
+Bardell1 = card('Bardelli', 2, 0, bardello, bardello, base_cost=2500, increase_per_purchase=1.185, cps=105)
+chump_hat = card('Chumphat', 0, 1, chump_hat, chump_hat, base_cost=80000, increase_per_purchase=1.15, cps=1000)
+nuclear_reactor = card('Nuclear-Reactor', 1, 1, nuclear_reactor, nuclear_reactor, base_cost=1000000, increase_per_purchase=3.15, cps=1000)
+Bardell4 = card('Bardelli', 2, 1, bardello, bardello, base_cost=1000000, increase_per_purchase=300.15, cps=10000)
 
-# list_of_cards = [slaves, Bardell, Bardell1, chump_hat, nuclear_reactor, Bardell4]
-
-# CREATE CARDS FROM CLASS
-#
-# create list
-#
-list_of_cards = []
-#
-# import images
-card_bad_code_img = pygame.image.load('CookieClicker/images/card_bad_code.png')
-card_bad_code = card("Slaves", 0, 0 , card_bad_code_img, base_cost=15, increase_per_purchase=1.15, cps=1)
-list_of_cards.append(card_bad_code)
-card_chump_hat_img = pygame.image.load('CookieClicker/images/card_chump_hat.png')
-card_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/card_diamond_pickaxe.png')
-card_golden_pickaxe_img = pygame.image.load('CookieClicker/images/card_golden_pickaxe.png')
-card_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/card_netherite_pickaxe.png')
-card_nuclearreactor_img = pygame.image.load('CookieClicker/images/card_nuclearreactor.png')
-card_slaves_img = pygame.image.load('CookieClicker/images/card_slaves.png')
-card_teachers_dream_img = pygame.image.load('CookieClicker/images/card_teachers_dream.png')
-card_turbo_img = pygame.image.load('CookieClicker/images/card_turbo.png')
-card_wooden_pickaxe_img = pygame.image.load('CookieClicker/images/card_wooden_pickaxe.png')
+list_of_cards = [slaves, Bardell, Bardell1, chump_hat, nuclear_reactor, Bardell4]
 
 def format_number(n):
     if n >= 1000000000:
@@ -245,19 +216,10 @@ def draw():
 
     pygame.display.update()
 
-def createVariables(current_window_width, current_window_height, set_width_to_two):
+def createVariables(current_window_width, current_window_height):
     # CREATING GLOBAL VARIABLES FOR DYNAMIC LAYOUT
-    global card_length
-    card_length = 200
-    global card_height
-    card_height = 280
-    global total_card_length
-    total_card_length = card_length + 10
     global x_pos_leiste
-    if set_width_to_two == "TRUE":
-        x_pos_leiste = current_window_width - 36 - ( total_card_length * 2 )
-    elif set_width_to_two == "FALSE":
-        x_pos_leiste = current_window_width * 2/3
+    x_pos_leiste = current_window_width * 2/3
     global x_pos_upgradeBackground
     x_pos_upgradeBackground = x_pos_leiste + 10
     global x_pos_cookie
@@ -276,8 +238,12 @@ def createVariables(current_window_width, current_window_height, set_width_to_tw
     y_pos_store = 20 - (relative_scroll_y * 20)
     global store_width
     store_width = current_window_width - x_pos_upgradeBackground
+    global card_length
+    card_length = 200
+    global card_height
+    card_height = 280
     global cards_per_row
-    cards_per_row = math.floor(store_width / total_card_length)
+    cards_per_row = math.floor(store_width / ( card_length + 10 ))
 
 
 # SETUP MAIN-LOOP
@@ -300,11 +266,7 @@ while main == True:
     current_window_height = pygame.display.get_surface().get_height()
 
     # CREATE VARIABLES FOR DYNAMIC LAYOUT
-    set_width_to_two = "FALSE"
-    createVariables(current_window_width, current_window_height, set_width_to_two)
-    if cards_per_row < 2:
-        set_width_to_two = "TRUE"
-        createVariables(current_window_width, current_window_height, set_width_to_two)
+    createVariables(current_window_width, current_window_height)
 
     # DRAW NEW FRAME
     draw()
