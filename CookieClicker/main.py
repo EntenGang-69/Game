@@ -1,4 +1,5 @@
 import pygame
+import pygame_menu
 import sys
 import math
 
@@ -35,14 +36,24 @@ BLUE = (51, 90, 144)
 # CUSTOM CURSOR SETUP
 #
 # import img
-custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png')
-cursor_size = (int(8)), (int(8))
+custom_default_cursor_img = pygame.transform.scale(pygame.image.load('CookieClicker/images/custom_default_cursor.png').convert(), (20, 20))
+custom_default_cursor_img.set_colorkey((0, 0, 0))
+#cursor_size = (int(8)), (int(8))
 # hit point
-hit_point = ( int( custom_default_cursor_img.get_width() * 0.5 ) ), (int( custom_default_cursor_img.get_height() * 0.1) )
+#hit_point = ( int( custom_default_cursor_img.get_width() * 0.5 ) ), (int( custom_default_cursor_img.get_height() * 0.1) )
 # replace cursor
-tuple = custom_default_cursor_img.get_rect()
-pygame.mouse.set_cursor(cursor_size, hit_point, tuple, tuple)
+#tuple = custom_default_cursor_img.get_rect()
+#pygame.mouse.set_cursor(cursor_size, hit_point, tuple, tuple)
 
+template = "{} - By: Vapor{}"
+CAPTION = "Cookie Clicker THE ORIGINAL"
+name = " Version 1.0 "
+pygame.display.set_caption(template.format(CAPTION, name.capitalize()))
+pygame.display.set_icon(cookie_img)
+
+cursor_surface = custom_default_cursor_img
+cursor = pygame.cursors.Cursor((8, 0), cursor_surface)
+pygame.mouse.set_cursor(cursor)
 
 class MainCookie:
     def __init__(self, x_pos_cookie, y_pos_cookie, x_size_cookie):
@@ -55,7 +66,7 @@ class MainCookie:
     def draw(self):
 
         if self.animation_state > 0:
-            cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1.3*x_size_cookie), int(1.3*x_size_cookie) ))
+            cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1.1*x_size_cookie), int(1.1*x_size_cookie) ))
             window.blit(cookie_img_scaled, (cookie_img_scaled.get_rect(center =( x_pos_cookie, y_pos_cookie) )))
             self.animation_state -= 1
         else:
@@ -80,6 +91,7 @@ class ScoreDisplay():
         window.blit(SCORE, (SCORE.get_rect( center=( int(x_pos_score), int(y_pos_score) ) )))
         window.blit(CPS, (CPS.get_rect(center=(int(x_pos_score), int(y_pos_score)+20 ) )))
 class card:
+    # INITIAL STATIC SETUP OF CARD (TEMPORARILY)
     def __init__(self, name, index_x, index_y, image, base_cost, increase_per_purchase, cps):
         self.name = name
         self.index_x = index_x
@@ -95,15 +107,19 @@ class card:
         self.quantity = 0
         self.created = 0
 
+    # DEFINING COLLIDER / HITBOX
     def collidepoint(self, mouse_pos):
         pos_x = x_pos_store + (self.card_index_x * (self.length + 10))
         pos_y = y_pos_store + (self.card_index_y * (self.height + 10))
         return pygame.Rect(pos_x, pos_y, self.length, self.height).collidepoint(mouse_pos)
 
+    # DEFINING TOTAL COST AFTER PRICE INCREASE
     def getTotalCost(self):
         return self.base_cost * self.increase_per_purchase**(self.quantity)
 
+    # DRAW THE CARD
     def draw(self, card_index_x, card_index_y, solid = True):
+        # DEFINING VARIABLES
         store_cost_font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 14)
         store_quantity_cost = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
         cost = store_cost_font.render('{}'.format( format_number(int(self.getTotalCost()) ) ), True, GREEN)
@@ -111,14 +127,21 @@ class card:
         quantity = store_quantity_cost.render('{}'.format(self.quantity), True, BLUE)
         quantity_length = quantity.get_rect().width
 
+        # SET / CHECK: PARTIALLY TRANSLUCENT
         if solid == False:
             self.image.set_alpha(100)
         else:
             self.image.set_alpha(255)
+        
+        # SET POSITION
         pos_x = x_pos_store + (card_index_x * (self.length + 10))
         pos_y = y_pos_store + (card_index_y * (self.height + 10))
+
+        # SET INDEX
         self.card_index_x = card_index_x
         self.card_index_y = card_index_y
+
+        # DRAW TO SCREEN
         window.blit(self.image, (pos_x, pos_y))
         window.blit(cost, (pos_x + 170 - cost_length, pos_y + 10))
         window.blit(quantity, (pos_x + self.length -45 - quantity_length, pos_y + self.height -47))
@@ -146,55 +169,83 @@ class card:
 #
 
 class Player:
+    # INITIAL SETUP OF PLAYER
     def __init__(self):
         self.score = 0
         self.click_multiplier = 1
         self.cps = 0
 
+    #  UPDATE THE TOTAL CLICKS-PER-SECOND
     def updateTotalCPS(self, list_of_cards):
         self.cps = 0
         for card in list_of_cards:
             self.cps += card.cps * card.quantity
 
-'''pos1 = x, pos2 = y'''
+# SETUP COOKIE (ONLY TEMPORARY VALUES FOR POSITION AND SIZE)
 cookie = MainCookie(300, 240, 200)
 
+# SETUP SCORE-BOARD (ONLY TEMPORARY VALUES FOR POSITION AND SIZE)
 score_display = ScoreDisplay(360, 0)
+
+# SETUP PLAYER
 user = Player()
 
-'''cards'''
+# SET UPGRADE-STORE POSITION (ONLY TEMPORARY VALUES)
 store_y = 20
 store_x = 830
 
-# slaves = card("Slaves", 0, 0 , slaves, slaves, base_cost=15, increase_per_purchase=1.15, cps=1)
-# Turbo = card('Turbo', 1, 0, turbo, turbo, base_cost=100, increase_per_purchase=1.18, cps=20)
-# Bardell1 = card('Bardelli', 2, 0, bardello, bardello, base_cost=2500, increase_per_purchase=1.185, cps=105)
-# chump_hat = card('Chumphat', 0, 1, chump_hat, chump_hat, base_cost=80000, increase_per_purchase=1.15, cps=1000)
-# nuclear_reactor = card('Nuclear-Reactor', 1, 1, nuclear_reactor, nuclear_reactor, base_cost=1000000, increase_per_purchase=3.15, cps=1000)
-# Bardell4 = card('Bardelli', 2, 1, bardello, bardello, base_cost=1000000, increase_per_purchase=300.15, cps=10000)
-
-# list_of_cards = [slaves, Bardell, Bardell1, chump_hat, nuclear_reactor, Bardell4]
-
 # CREATE CARDS FROM CLASS
-#
 # create list
-#
 list_of_cards = []
-#
-# import images
-card_bad_code_img = pygame.image.load('CookieClicker/images/card_bad_code.png')
-card_bad_code = card("Slaves", 0, 0 , card_bad_code_img, base_cost=15, increase_per_purchase=1.15, cps=1)
-list_of_cards.append(card_bad_code)
-card_chump_hat_img = pygame.image.load('CookieClicker/images/card_chump_hat.png')
-card_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/card_diamond_pickaxe.png')
-card_golden_pickaxe_img = pygame.image.load('CookieClicker/images/card_golden_pickaxe.png')
-card_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/card_netherite_pickaxe.png')
-card_nuclearreactor_img = pygame.image.load('CookieClicker/images/card_nuclearreactor.png')
+########################################################################
+# ROW1 : get image
+# ROW2 : create card from class, set values
+# ROW3 : append to list
+########################################################################
+# NORMAL CARDS
 card_slaves_img = pygame.image.load('CookieClicker/images/card_slaves.png')
-card_teachers_dream_img = pygame.image.load('CookieClicker/images/card_teachers_dream.png')
-card_turbo_img = pygame.image.load('CookieClicker/images/card_turbo.png')
-card_wooden_pickaxe_img = pygame.image.load('CookieClicker/images/card_wooden_pickaxe.png')
+card_slaves = card("Slaves", 0, 0 , card_slaves_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_slaves)
 
+card_turbo_img = pygame.image.load('CookieClicker/images/card_turbo.png')
+card_turbo = card("Turbo", 0, 0 , card_turbo_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_turbo)
+
+card_chump_hat_img = pygame.image.load('CookieClicker/images/card_chump_hat.png')
+card_chump_hat = card("Chump Hat", 0, 0 , card_chump_hat_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_chump_hat)
+
+card_nuclearreactor_img = pygame.image.load('CookieClicker/images/card_nuclearreactor.png')
+card_nuclearreactor = card("Nuclear Reactor", 0, 0 , card_nuclearreactor_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_nuclearreactor)
+########################################################################
+# PICKAXES
+card_wooden_pickaxe_img = pygame.image.load('CookieClicker/images/card_wooden_pickaxe.png')
+card_wooden_pickaxe = card("Wooden Pickaxe", 0, 0 , card_wooden_pickaxe_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_wooden_pickaxe)
+
+card_golden_pickaxe_img = pygame.image.load('CookieClicker/images/card_golden_pickaxe.png')
+card_golden_pickaxe = card("Golden Pickaxe", 0, 0 , card_golden_pickaxe_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_golden_pickaxe)
+
+card_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/card_diamond_pickaxe.png')
+card_diamond_pickaxe = card("Diamond Pickaxe", 0, 0 , card_diamond_pickaxe_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_diamond_pickaxe)
+
+card_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/card_netherite_pickaxe.png')
+card_netherite_pickaxe = card("Netherite Pickaxe", 0, 0 , card_netherite_pickaxe_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_netherite_pickaxe)
+########################################################################
+# DEBUFFS
+card_bad_code_img = pygame.image.load('CookieClicker/images/card_bad_code.png')
+card_bad_code = card("Bad Code", 0, 0 , card_bad_code_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_bad_code)
+
+card_teachers_dream_img = pygame.image.load('CookieClicker/images/card_teachers_dream.png')
+card_teachers_dream = card("Teachers Dream", 0, 0 , card_teachers_dream_img, base_cost=15, increase_per_purchase=1.15, cps=1)
+list_of_cards.append(card_teachers_dream)
+
+# FUNCTION TO FORMAT NUMBERS INTO TEXT
 def format_number(n):
     if n >= 1000000000:
         if (n / 1000000000) % 1 == 0:
@@ -208,20 +259,20 @@ def format_number(n):
             n = '{:.2f} million'.format(n / 1000000)
     return n
 
+# FUNCTION TO DRAW A NEW FRAME
 def draw():
-
-    '''Draw Background'''
+    # BACKGROUND AND DIVIDER
     window.blit(background_img, (0,0))
-
     window.blit(upgrades_bg, (x_pos_upgradeBackground, 0))
     window.blit(leiste, (x_pos_leiste, 0))
 
-    '''Draw Cookie & ScoreDisplay'''
-
+    # COOKIE
     cookie.draw()
+
+    # SCORE BOARD
     score_display.draw(x_pos_score, y_pos_score)
 
-    '''Draw cards'''
+    # CARDS
     card_index_x = 0
     card_index_y = 0
     for card in list_of_cards:
@@ -235,7 +286,7 @@ def draw():
         else:
             card_index_x += 1
 
-        '''ADD cookies made trough cards'''
+        # ADD COOKIES THAT WERE MADE TROUGH UPGRADE
         user.score += card.quantity * card.cps * .025
         card.created += card.quantity * card.cps * .01
 
