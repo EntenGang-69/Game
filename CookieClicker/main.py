@@ -1,32 +1,24 @@
+# IMPORT LIBRARIES
 import pygame
 import pygame_menu
 import sys
 import math
 
+# INITIALIZE PYGAME
 pygame.init()
 
+# INITIAL SETUP OF WINDOW
 window_height = 420
 window_length = window_height/9*16
 window = pygame.display.set_mode((window_length, window_height), pygame.RESIZABLE, pygame.SCALED)
-current_window_width, _ = pygame.display.get_surface().get_size()
 
+# IMPORT IMAGES
 background_img = pygame.image.load('CookieClicker/images/grey.jpg')
-
 cookie_img = pygame.image.load('CookieClicker/images/keks.png')
-
-'''cards'''
-# turbo = pygame.image.load('CookieClicker/images/turbo.png')
-# bardello = pygame.image.load('CookieClicker/images/bardello.png')
-# slaves = pygame.image.load('CookieClicker/images/slaves.png')
-# chump_hat = pygame.image.load('CookieClicker/images/chump_hat.png')
-# nuclear_reactor = pygame.image.load('CookieClicker/images/nuclearreactor.png')
-
-'''Details'''
 upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
 leiste = pygame.image.load('CookieClicker/images/leiste.png')
-card_display_background = pygame.image.load('CookieClicker/images/grey.jpg')
 
-'''Colors'''
+# SET DEFAULT COLORS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (155, 155, 155)
@@ -36,26 +28,26 @@ BLUE = (51, 90, 144)
 # CUSTOM CURSOR SETUP
 #
 # import img
-custom_default_cursor_img = pygame.transform.scale(pygame.image.load('CookieClicker/images/custom_default_cursor.png').convert(), (20, 20))
+custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png').convert()
+# scale img
+custom_default_cursor_img =pygame.transform.scale(custom_default_cursor_img, (20, 20))
+# black to transparent
 custom_default_cursor_img.set_colorkey((0, 0, 0))
-#cursor_size = (int(8)), (int(8))
-# hit point
-#hit_point = ( int( custom_default_cursor_img.get_width() * 0.5 ) ), (int( custom_default_cursor_img.get_height() * 0.1) )
-# replace cursor
-#tuple = custom_default_cursor_img.get_rect()
-#pygame.mouse.set_cursor(cursor_size, hit_point, tuple, tuple)
-
-template = "{} - By: Vapor{}"
-CAPTION = "Cookie Clicker THE ORIGINAL"
-name = " Version 1.0 "
-pygame.display.set_caption(template.format(CAPTION, name.capitalize()))
-pygame.display.set_icon(cookie_img)
-
-cursor_surface = custom_default_cursor_img
-cursor = pygame.cursors.Cursor((8, 0), cursor_surface)
+# set cursor
+cursor = pygame.cursors.Cursor((8, 0), custom_default_cursor_img)
 pygame.mouse.set_cursor(cursor)
 
+# SETUP TITLE
+template = "{} - {}"
+CAPTION = "Cookie Clicker THE ORIGINAL"
+version = " Version 1.0 "
+pygame.display.set_caption(template.format(CAPTION, version.capitalize()))
+
+# SETUP WINDOW ICON
+pygame.display.set_icon(cookie_img)
+
 class MainCookie:
+    # INITIAL SETUP OF COOKIE
     def __init__(self, x_pos_cookie, y_pos_cookie, x_size_cookie):
         self.x = x_pos_cookie
         self.y = y_pos_cookie
@@ -63,15 +55,21 @@ class MainCookie:
         self.height = x_size_cookie
 
         self.animation_state = 0
-    def draw(self):
 
+    # DRAW COOKIE
+    def draw(self):
+        # ANIMATINION STATES
+        # while hit
         if self.animation_state > 0:
             cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1.1*x_size_cookie), int(1.1*x_size_cookie) ))
             window.blit(cookie_img_scaled, (cookie_img_scaled.get_rect(center =( x_pos_cookie, y_pos_cookie) )))
             self.animation_state -= 1
+        # default
         else:
             cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1*x_size_cookie), int(1*x_size_cookie) ))
             window.blit(cookie_img_scaled, (cookie_img_scaled.get_rect(center =( x_pos_cookie, y_pos_cookie) )))
+
+    # DEFINING COLLIDER / HITBOX
     def collidepoint(self, mouse_pos):
         return pygame.Rect(x_pos_cookie-x_size_cookie/2, y_pos_cookie-x_size_cookie/2, x_size_cookie, x_size_cookie).collidepoint(mouse_pos)
 
@@ -357,9 +355,6 @@ while main == True:
         set_width_to_two = "TRUE"
         createVariables(current_window_width, current_window_height, set_width_to_two)
 
-    # DRAW NEW FRAME
-    draw()
-
     # EVENT LISTENERS
     for event in pygame.event.get():
 
@@ -388,6 +383,9 @@ while main == True:
         # EXIT BUTTON
         if event.type == pygame.QUIT:
             main = False
+    
+    # DRAW NEW FRAME
+    draw()
     
     # CLEAR EVENT QUEUE
     pygame.event.clear()
