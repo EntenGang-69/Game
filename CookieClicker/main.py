@@ -3,8 +3,6 @@ import pygame
 import pygame_menu
 import sys
 import math
-from playsound import playsound
-import threading
 
 # INITIALIZE PYGAME
 pygame.init()
