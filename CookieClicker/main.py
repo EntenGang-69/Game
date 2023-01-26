@@ -24,12 +24,17 @@ upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
 leiste = pygame.image.load('CookieClicker/images/leiste.png')
 audio_play_img = pygame.image.load('CookieClicker/images/play.png')
 audio_pause_img = pygame.image.load('CookieClicker/images/pause.png')
+npc_dialog_black = pygame.image.load('CookieClicker/images/black2.png')
+npc_dialog_white = pygame.image.load('CookieClicker/images/white.png')
+npc_cookie_monster = pygame.image.load('CookieClicker/images/cookie_monster.png')
+npc_cookie_monster_cookies = pygame.image.load('CookieClicker/images/cookie_monster_cookies.png')
 
 
 # IMPORT AUDIO
 awm = pygame.mixer.Sound('CookieClicker/audio/awm.mp3')
 upgrade_sound = pygame.mixer.Sound('CookieClicker/audio/8-Bit_Upgrade-Sound.mp3')
 key_press = pygame.mixer.Sound('CookieClicker/audio/key_press.mp3')
+cookie_monster_sound = pygame.mixer.Sound('CookieClicker/audio/Hom_nom_nom_nom_nom.mp3')
 
 # SET DEFAULT COLORS
 WHITE = (255, 255, 255)
@@ -193,6 +198,83 @@ class Music():
         else:
             window.blit(audio_pause_img_scaled, (x_pos_music_play_pause, y_pos_music_play_pause))
 
+class NPC():
+    # INITIAL SETUP OF NPC
+    def __init__(self, text, sound):
+        self.text = text
+        self.were_activ = False
+        self.NPC_pop = False
+        self.NPC_pop_stay = False
+        self.NPC_pop_return = False
+        self.once_activ = False
+        self.time = 0
+        self.display_dialog_speed = 12
+        self.counter = 0
+        self.sound = sound
+
+        self.time_until_pop_return = 5000
+        self.NPC_cookie_steal = user.score*0.5
+
+    # DRAW NPC DIALOG WINDOW IN ANIMATION TO FRAME
+    def draw(self):
+        npc_dialog_black_scaled = pygame.transform.scale(npc_dialog_black, (x_pos_leiste, npc_dialog_height))
+        npc_dialog_black_scaled.set_alpha(200)            
+        npc_dialog_white_top = pygame.transform.scale(npc_dialog_white, (x_pos_leiste, 15))
+        npc_dialog_white_bottom = pygame.transform.scale(npc_dialog_white, (15, npc_dialog_height))
+        npc_cookie_monster_scaled = pygame.transform.scale(npc_cookie_monster, (npc_dialog_height, npc_dialog_height))
+        npc_cookie_monster_scaled_cookies = pygame.transform.scale(npc_cookie_monster_cookies, (npc_dialog_height, npc_dialog_height))
+
+        dialog_text = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
+        dialog_text_rendert = dialog_text.render(self.text, True, (255, 255, 255))
+
+        if self.NPC_pop == True:
+            if not self.counter >= int(y_pos_npc_dialog * 0.5) or self.counter == 0:
+                self.counter += self.display_dialog_speed
+
+                if self.counter >= int(y_pos_npc_dialog * 0.5):
+                    self.NPC_pop_stay = True
+            else:
+                self.NPC_pop = False
+                self.counter = 0
+
+            if self.counter < int(y_pos_npc_dialog * 0.5) and not self.NPC_pop_stay == True:
+                window.blit(npc_cookie_monster_scaled, (0, current_window_height - y_pos_npc_dialog * 0.5 - self.counter))
+                window.blit(npc_dialog_black_scaled, (0, current_window_height - self.counter ))
+                window.blit(npc_dialog_white_top, (0, current_window_height - 15 - self.counter))
+                window.blit(npc_dialog_white_bottom, (x_pos_leiste - 15, current_window_height - self.counter))
+                window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height + npc_dialog_text_pos - self.counter))))
+
+        if self.NPC_pop_stay == True:
+            if self.time == 0:
+                pygame.mixer.Sound.play(self.sound, 1)
+            window.blit(npc_cookie_monster_scaled, (0, y_pos_npc_dialog * 0.5))
+            window.blit(npc_dialog_black_scaled, (0, y_pos_npc_dialog))
+            window.blit(npc_dialog_white_top, (0, y_pos_npc_dialog - 15))
+            window.blit(npc_dialog_white_bottom, (x_pos_leiste - 15, y_pos_npc_dialog))
+            window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height - npc_dialog_text_pos))))
+            self.time += Clock.get_time()
+
+        if self.NPC_pop_return == True:
+            self.NPC_pop_stay = False
+            if not self.counter >= int(y_pos_npc_dialog * 0.5):
+                self.counter += self.display_dialog_speed
+            else:
+                self.NPC_pop_return = False
+                pygame.mixer.music.unpause()
+
+            if self.counter < int(y_pos_npc_dialog * 0.5) and not self.NPC_pop_stay == True:
+                window.blit(npc_cookie_monster_scaled_cookies, (0, y_pos_npc_dialog * 0.5 + self.counter))
+                window.blit(npc_dialog_black_scaled, (0, y_pos_npc_dialog + self.counter ))
+                window.blit(npc_dialog_white_top, (0, y_pos_npc_dialog - 15 + self.counter))
+                window.blit(npc_dialog_white_bottom, (x_pos_leiste - 15, y_pos_npc_dialog + self.counter))            
+                window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height - npc_dialog_text_pos + self.counter))))
+
+        if self.time > self.time_until_pop_return and self.once_activ == False:
+            user.score = user.score*0.5
+            self.NPC_pop_return = True
+            self.once_activ = True
+
+
 
 # SETUP COOKIE (ONLY TEMPORARY VALUES FOR POSITION AND SIZE)
 cookie = MainCookie(300, 240, 200)
@@ -205,6 +287,9 @@ user = Player()
 
 # SETUP MUSIC
 theme = Music()
+
+# SETUP NPC 
+cookie_monster = NPC("You have got some cookies there may I have some?", cookie_monster_sound)
 
 # SET UPGRADE-STORE POSITION (ONLY TEMPORARY VALUES)
 store_y = 20
@@ -309,6 +394,9 @@ def draw():
 
     # MUSIC CONTROL
     theme.draw()
+
+    # NPC
+    cookie_monster.draw()
 
     # CARDS
     card_index_x = 0
@@ -426,6 +514,12 @@ def createVariables(current_window_width, current_window_height, set_width_to_tw
     x_size_music_play_pause = 30
     global current_window_center
     current_window_center = [current_window_width/2, current_window_height/2]
+    global y_pos_npc_dialog
+    y_pos_npc_dialog = current_window_height * 2/3
+    global npc_dialog_height
+    npc_dialog_height = current_window_height * 1/3
+    global npc_dialog_text_pos
+    npc_dialog_text_pos = abs(y_pos_npc_dialog - current_window_height)/2
 
 # INTRO MUSIC
 def playIntroMusic():
@@ -557,6 +651,12 @@ while main == True:
             # EXIT BUTTON
             if event.type == pygame.QUIT:
                 main = False
+        
+        # DRAW NPC
+        if user.score == 10 and cookie_monster.were_activ == False:
+            cookie_monster.NPC_pop = True
+            pygame.mixer.music.pause()
+            cookie_monster.were_activ = True
                 
         # DRAW NEW FRAME
         draw()
