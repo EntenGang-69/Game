@@ -1,6 +1,5 @@
 # IMPORT LIBRARIES
 import pygame
-# import pygame_menu
 import sys
 import math
 import random
@@ -44,6 +43,7 @@ black_fade_half = pygame.image.load('CookieClicker/images/black_fade_half.png')
 # IMPORT AUDIO
 awm = pygame.mixer.Sound('CookieClicker/audio/awm.mp3')
 upgrade_sound = pygame.mixer.Sound('CookieClicker/audio/8-Bit_Upgrade-Sound.mp3')
+golden_cookie_sound = pygame.mixer.Sound('CookieClicker/audio/8-Bit_Golden-Cookie-Sound.mp3')
 key_press = pygame.mixer.Sound('CookieClicker/audio/key_press.mp3')
 cookie_monster_sound = pygame.mixer.Sound('CookieClicker/audio/Hom_nom_nom_nom_nom.mp3')
 jumpscare_cookie_scream = pygame.mixer.Sound('CookieClicker/audio/jumpscare_cookie_scream.mp3')
@@ -55,17 +55,15 @@ GRAY = (155, 155, 155)
 GREEN = (198, 134, 123)
 BLUE = (51, 60, 75)
 
-# CUSTOM CURSOR SETUP
+# STANDARD CURSOR SETUP
 #
 # import img
-custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png').convert()
+custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png')
 # scale img
 custom_default_cursor_img =pygame.transform.scale(custom_default_cursor_img, (20, 20))
-# black to transparent
-custom_default_cursor_img.set_colorkey((0, 0, 0))
 # set cursor
-cursor = pygame.cursors.Cursor((8, 0), custom_default_cursor_img)
-pygame.mouse.set_cursor(cursor)
+standard_cursor = pygame.cursors.Cursor((8, 0), custom_default_cursor_img)
+pygame.mouse.set_cursor(standard_cursor)
 
 # SETUP TITLE
 template = "{} - {}"
@@ -114,8 +112,8 @@ class ScoreDisplay():
         font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 24)
         small_font = pygame.font.Font('CookieClicker/Font/Kavoon-Regular.ttf', 26)
 
-        SCORE = small_font.render('{} cookies'.format(format_number ( int(user.score) )), True, WHITE)
-        CPS = font.render('per second: {}'.format(format_number ( int(user.cps))), True, WHITE)
+        SCORE = small_font.render('{} cookies'.format(format_number ( int(user.score))), True, WHITE)
+        CPS = font.render('per second: {}'.format(format_number ( user.cps)), True, WHITE)
         window.blit(SCORE, (SCORE.get_rect( center=( int(x_pos_score), int(y_pos_score) ) )))
         window.blit(CPS, (CPS.get_rect(center=(int(x_pos_score), int(y_pos_score)+20 ) )))
 class card:
@@ -157,6 +155,7 @@ class card:
         cost_length = cost.get_rect().width
         quantity = store_quantity_cost.render('{}'.format(self.quantity), True, BLUE)
         quantity_length = quantity.get_rect().width
+        black_overlay_scaled = pygame.transform.scale(black_fade_full, (self.length, self.height))
 
         # SET / CHECK: PARTIALLY TRANSLUCENT
         if solid == False:
@@ -165,8 +164,8 @@ class card:
             self.image.set_alpha(255)
         
         # SET POSITION
-        pos_x = x_pos_store + (card_index_x * (self.length + current_window_width * 0.01))
-        pos_y = y_pos_store + (card_index_y * (self.height + current_window_width * 0.01))
+        pos_x = x_pos_store + (card_index_x * (self.length + 10))
+        pos_y = y_pos_store + (card_index_y * (self.height + 10))
 
         # SET INDEX
         self.card_index_x = card_index_x
@@ -174,42 +173,46 @@ class card:
 
         # DRAW TO SCREEN
         window.blit(self.image, (pos_x, pos_y))
-        window.blit(cost, (pos_x + 170 - cost_length, pos_y + 11))
-        window.blit(quantity, (pos_x + self.length -45 - quantity_length, pos_y + self.height -42))
+        window.blit(cost, (pos_x + 160 - cost_length, pos_y + self.height -40))
+        window.blit(quantity, (pos_x + 170 - quantity_length, pos_y + 7))
+        window.blit(black_overlay_scaled, (pos_x, pos_y))
 
 class cursor:
     # INITIAL SETUP OF CURSOR
-    def __init__(self, name, index_x, index_y, image, cost, cph):
+    def __init__(self, name, index_x, index_y, image, cost, cph, condition_id, sound):
         self.name = name
         self.index_x = index_x
         self.index_y = index_y
         self.length = 100
         self.height = 100
+        self.sound = sound
 
         self.image = pygame.transform.scale(image, (self.length, self.height))
         self.cost = cost
         self.cph = cph
+        self.condition_id = condition_id
 
         self.max_card_count = 1
 
         self.quantity = 0
         self.created = 0
+
+        self.cursor_image = pygame.transform.scale(image.convert(), (20, 20))
     
     # DEFINING COLLIDER / HITBOX
     def collidepoint(self, mouse_pos):
-        pos_x = x_pos_store + (self.card_index_x * (self.length + 10))
-        pos_y = wooden_bar_width + (self.card_index_y * (self.height + 10))
+        pos_x = x_pos_store + (self.cursor_index_x * (self.length + 10))
+        pos_y = wooden_bar_width + (self.cursor_index_y * (self.height + 10))
         return pygame.Rect(pos_x, pos_y, self.length, self.height).collidepoint(mouse_pos)
 
     # DRAW THE CARD
-    def draw(self, card_index_x, card_index_y, solid = True):
+    def draw(self, cursor_index_x, cursor_index_y, solid = True):
         # DEFINING VARIABLES
         store_cost_font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 14)
         store_quantity_cost = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
         cost = store_cost_font.render('{}'.format( format_number(int(self.cost) ) ), True, GREEN)
         cost_length = cost.get_rect().width
         quantity = store_quantity_cost.render('{}'.format(self.quantity), True, BLUE)
-        quantity_length = quantity.get_rect().width
 
         # SET / CHECK: PARTIALLY TRANSLUCENT
         if solid == False:
@@ -218,24 +221,43 @@ class cursor:
             self.image.set_alpha(255)
         
         # SET POSITION
-        pos_x = x_pos_store + (card_index_x * (self.length + current_window_width * 0.01))
-        pos_y = wooden_bar_width + (card_index_y * (self.height + current_window_width * 0.01))
+        pos_x = x_pos_store + (cursor_index_x * (self.length + current_window_width * 0.01))
+        pos_y = wooden_bar_width + (cursor_index_y * (self.height + current_window_width * 0.01))
 
         # SET INDEX
-        self.card_index_x = card_index_x
-        self.card_index_y = card_index_y
+        self.cursor_index_x = cursor_index_x
+        self.cursor_index_y = cursor_index_y
 
         # DRAW TO SCREEN
         window.blit(self.image, (pos_x, pos_y))
         window.blit(cost, (pos_x + 80 - cost_length, pos_y + 80))
+    
+    # CHANGE CURSOR
+    def setCursor(self):
+        # black to transparent
+        self.cursor_image.set_colorkey((0, 0, 0))
+        # set cursor
+        cursor = pygame.cursors.Cursor((8, 0), self.cursor_image)
+        pygame.mouse.set_cursor(cursor)
+
+    # CHECK FOR DISPLAY CONDITION
+    def checkCondition(self):
+        if list_of_cards[self.condition_id].quantity >= 5:
+            return True
+        else:
+            return False
+
+    # HIT SOUND
+    def hitSound(self):
+        pygame.mixer.Sound.play(self.sound, 0)
 
 class Player:
     # INITIAL SETUP OF PLAYER
     def __init__(self):
-        self.score = 0
+        self.score = float(0)
         self.click_multiplier = 1
         # cookies per second (AUTOMATICALLY GENERATED COOKIES)
-        self.cps = 0
+        self.cps = float(0)
         # cookies per hit (MANUALLY GENERATED COOKIES)
         self.cph = 1
 
@@ -349,7 +371,7 @@ class NPC():
                 window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height - npc_dialog_text_pos + self.counter))))
 
         if self.time > self.time_until_pop_return and self.once_activ == False:
-            user.score = user.score*0.5
+            user.score = float(user.score*0.5)
             self.NPC_pop_return = True
             self.once_activ = True
 
@@ -455,24 +477,40 @@ list_of_cards.append(card_nestle)
 card_oil_img = pygame.image.load('CookieClicker/images/card_oil.png')
 card_oil = card("Oil", 0, 0 , card_oil_img, base_cost=1400000, increase_per_purchase=1.15, cps=1400)
 list_of_cards.append(card_oil)
+
+card_cookie_collector_img = pygame.image.load('CookieClicker/images/card_cookie_collector.png')
+card_cookie_collector = card("Cookie Collector", 0, 0 , card_cookie_collector_img, base_cost=20000000, increase_per_purchase=1.15, cps=7800)
+list_of_cards.append(card_cookie_collector)
+
+card_cookie_drill_img = pygame.image.load('CookieClicker/images/card_cookie_drill.png')
+card_cookie_drill = card("Cookie Drill", 0, 0 , card_cookie_drill_img, base_cost=330000000, increase_per_purchase=1.15, cps=44000)
+list_of_cards.append(card_cookie_drill)
+
+card_cookie_mine_img = pygame.image.load('CookieClicker/images/card_cookie_mine.png')
+card_cookie_mine = card("Cookie Mine", 0, 0 , card_cookie_mine_img, base_cost=5100000000, increase_per_purchase=1.15, cps=260000)
+list_of_cards.append(card_cookie_mine)
 ########################################################################
 list_of_cursors = []
-# PICKAXES
+# CURSORS
 cursor_wooden_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_wooden_pickaxe.png')
-cursor_wooden_pickaxe = cursor("Wooden Pickaxe", 0, 0 , cursor_wooden_pickaxe_img, cost=100, cph=2)
+cursor_wooden_pickaxe = cursor("Wooden Pickaxe", 0, 0 , cursor_wooden_pickaxe_img, cost=100, cph=2, condition_id=0, sound=key_press)
 list_of_cursors.append(cursor_wooden_pickaxe)
 
 cursor_golden_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_golden_pickaxe.png')
-cursor_golden_pickaxe = cursor("Golden Pickaxe", 0, 0 , cursor_golden_pickaxe_img, cost=500, cph=8)
+cursor_golden_pickaxe = cursor("Golden Pickaxe", 0, 0 , cursor_golden_pickaxe_img, cost=500, cph=8, condition_id=1, sound=key_press)
 list_of_cursors.append(cursor_golden_pickaxe)
 
-card_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_diamond_pickaxe.png')
-card_diamond_pickaxe = cursor("Diamond Pickaxe", 0, 0 , card_diamond_pickaxe_img, cost=10000, cph=69)
-list_of_cursors.append(card_diamond_pickaxe)
+cursor_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_diamond_pickaxe.png')
+cursor_diamond_pickaxe = cursor("Diamond Pickaxe", 0, 0 , cursor_diamond_pickaxe_img, cost=10000, cph=69, condition_id=2, sound=key_press)
+list_of_cursors.append(cursor_diamond_pickaxe)
 
-card_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_netherite_pickaxe.png')
-card_netherite_pickaxe = cursor("Netherite Pickaxe", 0, 0 , card_netherite_pickaxe_img, cost=1000000, cph=112)
-list_of_cursors.append(card_netherite_pickaxe)
+cursor_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_netherite_pickaxe.png')
+cursor_netherite_pickaxe = cursor("Netherite Pickaxe", 0, 0 , cursor_netherite_pickaxe_img, cost=1000000, cph=112, condition_id=3, sound=key_press)
+list_of_cursors.append(cursor_netherite_pickaxe)
+
+cursor_scope_img = pygame.image.load('CookieClicker/images/scope.png')
+cursor_scope = cursor("AWM", 0, 0 , cursor_scope_img, cost=10000000, cph=1000, condition_id=4, sound=awm)
+list_of_cursors.append(cursor_scope)
 ########################################################################
 # DEBUFFS
 card_bad_code_img = pygame.image.load('CookieClicker/images/card_bad_code.png')
@@ -525,33 +563,15 @@ def draw():
     global main_music
     main_music = True
 
-    # SET DIVIDER SIZES
+    # IMPORT & SCALE IMAGES
     wooden_bar_vertical_scaled = pygame.transform.scale(wooden_bar_vertical, (wooden_bar_width, current_window_height))
     wooden_bar_horizontal_scaled = pygame.transform.scale(wooden_bar_horizontal, (current_window_width - (x_pos_leiste + wooden_bar_width), wooden_bar_width))
-
     background_img_scaled = pygame.transform.scale(background_img, (current_window_width, current_window_height))
     store_background_img_scaled = pygame.transform.scale(store_background_img, (current_window_height/9*16, current_window_height))
+    upgrade_store_background_img_scaled = pygame.transform.scale(upgrades_bg, (current_window_width - x_pos_upgradeBackground, y_pos_store_divider))
 
-    # BACKGROUND AND DIVIDERS
+    # BACKGROUND
     window.blit(background_img_scaled, (0,0))
-    window.blit(store_background_img_scaled, (x_pos_upgradeBackground, 0))
-    window.blit(wooden_bar_vertical_scaled, (x_pos_leiste, 0))
-    window.blit(wooden_bar_horizontal_scaled, (x_pos_leiste + wooden_bar_width, y_pos_store_divider))
-
-    # CURSOR STORE
-    card_index_x = 0
-    card_index_y = 0
-    for cursor in list_of_cursors:
-        if cursor.quantity < 1:
-            if user.score >= cursor.cost:
-                cursor.draw(card_index_x, card_index_y, solid=True)
-            else:
-                cursor.draw(card_index_x, card_index_y, solid=False)
-            if card_index_x == (cursors_per_row - 1):
-                card_index_x = 0
-                card_index_y += 1
-            else:
-                card_index_x += 1
 
     # COOKIE
     cookie.draw()
@@ -568,6 +588,9 @@ def draw():
     # NPC
     cookie_monster.draw()
     shrek_cookie.draw()
+
+    # STORE BACKGROUND
+    window.blit(store_background_img_scaled, (x_pos_upgradeBackground, 0))
 
     # CARDS
     card_index_x = 0
@@ -586,6 +609,28 @@ def draw():
         # ADD COOKIES THAT WERE MADE TROUGH UPGRADE
         user.score += card.quantity * card.cps * .025
         card.created += card.quantity * card.cps * .01
+
+    # CURSOR STORE
+    window.blit(upgrade_store_background_img_scaled, (x_pos_upgradeBackground, 0))
+
+    # CURSORS
+    cursor_index_x = 0
+    cursor_index_y = 0
+    for cursor in list_of_cursors:
+        if cursor.quantity < 1 and cursor.checkCondition():
+            if user.score >= cursor.cost:
+                cursor.draw(cursor_index_x, cursor_index_y, solid=True)
+            else:
+                cursor.draw(cursor_index_x, cursor_index_y, solid=False)
+            if cursor_index_x == (cursors_per_row - 1):
+                cursor_index_x = 0
+                cursor_index_y += 1
+            else:
+                cursor_index_x += 1
+
+    # DIVIDERS
+    window.blit(wooden_bar_vertical_scaled, (x_pos_leiste, 0))
+    window.blit(wooden_bar_horizontal_scaled, (x_pos_leiste + wooden_bar_width, y_pos_store_divider))
 
     # JUMPSCARE
     cookie_scream.draw()
@@ -656,13 +701,13 @@ def createVariables(current_window_width, current_window_height, set_width_to_tw
     global card_height
     card_height = 280
     global total_card_length
-    total_card_length = card_length + current_window_width * 0.01
+    total_card_length = card_length + 10
     global cursor_card_length
     cursor_card_length = 100
     global cursor_card_height
     cursor_card_height = 100
     global total_cursor_card_length
-    total_cursor_card_length = cursor_card_length + current_window_width * 0.01
+    total_cursor_card_length = cursor_card_length + 10
     global x_pos_leiste
     if set_width_to_two == "TRUE":
         x_pos_leiste = current_window_width - 36 - ( total_card_length * 2 )
@@ -692,6 +737,8 @@ def createVariables(current_window_width, current_window_height, set_width_to_tw
     store_width = current_window_width - x_pos_upgradeBackground
     global cards_per_row
     cards_per_row = math.floor(store_width / total_card_length)
+    global card_rows
+    card_rows = math.ceil(len(list_of_cards) / cards_per_row)
     global cursors_per_row
     cursors_per_row = math.floor(store_width / total_cursor_card_length)
     global x_pos_music_play_pause
@@ -721,17 +768,18 @@ def playMainMusic():
     pygame.mixer.music.load('CookieClicker/audio/8-Bit_Game.mp3')
     pygame.mixer.music.play(-1)
 
-# HIT SOUND
-def hitSound():
-    pygame.mixer.Sound.play(key_press, 0)
-
 # UPGRADE SOUND
 def upgradeSound():
     pygame.mixer.Sound.play(upgrade_sound, 0)
 
+# STANDARD HIT SOUND
+def hitSound():
+    pygame.mixer.Sound.play(key_press, 0)
+
 # SOUND MIXER
 pygame.mixer.Sound.set_volume(awm, 0.3)
 pygame.mixer.Sound.set_volume(upgrade_sound, 1)
+pygame.mixer.Sound.set_volume(golden_cookie_sound, 1)
 
 # SETUP MAIN-LOOP
 main = True
@@ -752,6 +800,8 @@ global main_music
 main_music = False
 global intro
 intro = False
+global current_cursor
+current_cursor = -1
 
 # START MAIN-LOOP
 while main == True:
@@ -802,31 +852,39 @@ while main == True:
                 mouse_pos = pygame.mouse.get_pos()
                 # HIT COOKIE
                 if cookie.collidepoint(mouse_pos):
-                    hitSound()
+                    if current_cursor >= 0:
+                        list_of_cursors[current_cursor].hitSound()
+                    else:
+                        hitSound()
                     user.score += user.cph
                     cookie.animation_state = 1
                 
                 # HIT GOLDEN COOKIE
                 if golden_cookie_objekt.collidepoint(mouse_pos):
                     user.score += user.score
-                    pygame.mixer.Sound.set_volume(awm, 1)
-                    pygame.mixer.Sound.play(awm, 0)
+                    pygame.mixer.Sound.set_volume(golden_cookie_sound, 1)
+                    pygame.mixer.Sound.play(golden_cookie_sound, 0)
                     golden_cookie_objekt.action = False
 
                 # HIT CURSOR CARD
-                for cursor in list_of_cursors:
-                    if cursor.collidepoint(mouse_pos) and user.score >= cursor.cost and cursor.quantity < 1:
-                        upgradeSound()
-                        user.score -= cursor.cost
-                        cursor.quantity += 1
-                        user.updateTotalCPH(list_of_cursors)
+                cursor_id = 0
+                for _cursor in list_of_cursors:
+                    if _cursor.checkCondition():
+                        if _cursor.collidepoint(mouse_pos) and user.score >= _cursor.cost and _cursor.quantity < 1:
+                            _cursor.setCursor()
+                            upgradeSound()
+                            user.score -= _cursor.cost
+                            _cursor.quantity += 1
+                            user.updateTotalCPH(list_of_cursors)
+                            current_cursor = cursor_id
+                    cursor_id +=1
 
                 # HIT CARD
-                for card in list_of_cards:
-                    if card.collidepoint(mouse_pos) and user.score >= card.getTotalCost() and card.quantity < card.max_card_count:
+                for _card in list_of_cards:
+                    if _card.collidepoint(mouse_pos) and user.score >= _card.getTotalCost() and _card.quantity < _card.max_card_count:
                         upgradeSound()
-                        user.score -= card.getTotalCost()
-                        card.quantity += 1
+                        user.score -= _card.getTotalCost()
+                        _card.quantity += 1
                         user.updateTotalCPS(list_of_cards)
 
                 # Hit PAUSE AND PLAY
@@ -845,6 +903,8 @@ while main == True:
                 relative_scroll[1] -= event.y
                 if relative_scroll[1] < 0:
                     relative_scroll[1] = 0
+                elif relative_scroll[1] > (card_rows * (card_height + 10))/20:
+                    relative_scroll[1] = (card_rows * (card_height + 10))/20
 
             # INPUT DATA TO CONSOLE
             if event.type == pygame.KEYDOWN and event.key == pygame.K_t:
