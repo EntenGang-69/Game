@@ -20,7 +20,7 @@ vapor_logo = pygame.image.load('CookieClicker/images/vapor_logo.png')
 cum_inc_logo = pygame.image.load('CookieClicker/images/cum_inc_logo.png')
 background_img = pygame.image.load('CookieClicker/images/cookie_clicker_background.png')
 store_background_img = pygame.image.load('CookieClicker/images/cookie_clicker_store_background.png')
-cookie_img = pygame.image.load('CookieClicker/images/keks.png')
+cookie_img = pygame.image.load('CookieClicker/images/cookie.png')
 upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
 leiste = pygame.image.load('CookieClicker/images/leiste.png')
 audio_play_img = pygame.image.load('CookieClicker/images/play.png')
@@ -45,6 +45,7 @@ awm = pygame.mixer.Sound('CookieClicker/audio/awm.mp3')
 upgrade_sound = pygame.mixer.Sound('CookieClicker/audio/8-Bit_Upgrade-Sound.mp3')
 golden_cookie_sound = pygame.mixer.Sound('CookieClicker/audio/8-Bit_Golden-Cookie-Sound.mp3')
 key_press = pygame.mixer.Sound('CookieClicker/audio/key_press.mp3')
+elixir = pygame.mixer.Sound('CookieClicker/audio/elixir.mp3')
 cookie_monster_sound = pygame.mixer.Sound('CookieClicker/audio/Hom_nom_nom_nom_nom.mp3')
 jumpscare_cookie_scream = pygame.mixer.Sound('CookieClicker/audio/jumpscare_cookie_scream.mp3')
 
@@ -489,6 +490,10 @@ list_of_cards.append(card_cookie_drill)
 card_cookie_mine_img = pygame.image.load('CookieClicker/images/card_cookie_mine.png')
 card_cookie_mine = card("Cookie Mine", 0, 0 , card_cookie_mine_img, base_cost=5100000000, increase_per_purchase=1.15, cps=260000)
 list_of_cards.append(card_cookie_mine)
+
+card_hog_rider_img = pygame.image.load('CookieClicker/images/card_hog_rider.png')
+card_hog_rider = card("Hog Rider", 0, 0 , card_hog_rider_img, base_cost=75000000000, increase_per_purchase=1.15, cps=5000000)
+list_of_cards.append(card_hog_rider)
 ########################################################################
 list_of_cursors = []
 # CURSORS
