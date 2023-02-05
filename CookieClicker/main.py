@@ -37,7 +37,6 @@ jumpscare_cookie = pygame.image.load('CookieClicker/images/jumpscare_cookie.png'
 golden_cookie_pic = pygame.image.load('CookieClicker/images/golden_cookie.png')
 wooden_bar_horizontal = pygame.image.load('CookieClicker/images/wooden_bar_horizontal.png')
 wooden_bar_vertical = pygame.image.load('CookieClicker/images/wooden_bar_vertical.png')
-chocolate_milk = pygame.image.load('CookieClicker/images/chocolate_milk.png')
 milk = pygame.image.load('CookieClicker/images/milk.png')
 black_fade_full = pygame.image.load('CookieClicker/images/black_fade_full.png')
 black_fade_half = pygame.image.load('CookieClicker/images/black_fade_half.png')
@@ -217,7 +216,7 @@ class Card:
         self.card_index_x = card_index_x
         self.card_index_y = card_index_y
 
-        # DRAW TO SCREEN
+        # DRAW CARD
         window.blit(self.image, (pos_x, pos_y))
         window.blit(cost, (pos_x + 160 - cost_length, pos_y + self.height -40))
         window.blit(quantity, (pos_x + 170 - quantity_length, pos_y + 7))
@@ -288,6 +287,7 @@ class Cursor:
     def setCursor(self):
         # black to transparent
         self.cursor_image.set_colorkey((0, 0, 0))
+
         # set cursor
         cursor = pygame.cursors.Cursor((8, 0), self.cursor_image)
         pygame.mouse.set_cursor(cursor)
@@ -303,6 +303,7 @@ class Cursor:
     def hitSound(self):
         pygame.mixer.Sound.play(self.sound, 0)
 
+# CLASS FOR DEBUFFS, WHICH REDUCE PLAYER VALUES AFTER ACTIVATION THROUGH NPC 
 class Debuff:
     # INITIAL SETUP OF DEBUFF
     def __init__(self, name, image, score_reduce, cps_reduce, cph_reduce, sound):
@@ -322,13 +323,15 @@ class Debuff:
         self.quantity = 0
         self.created = 0
 
+    # REDUCE PLAYER VALUES
     def reduce(self):
-        user.score -= self.score_reduce
-        user.cps -= self.cps_reduce
-        user.cph -= self.cph_reduce
+        user.score -= user.score * self.score_reduce
+        user.cps -= user.cps * self.cps_reduce
+        user.cph -= user.cph * self.cph_reduce
         user.updateTotalCPS()
         user.updateTotalCPH()
     
+    # DRAW DEBUFF CARD 
     def draw(self):
         window.blit(self.image, (current_window_width*0.6, current_window_height*0.5))
 
@@ -379,7 +382,7 @@ class Music():
         else:
             window.blit(audio_pause_img_scaled, (x_pos_music_play_pause, y_pos_music_play_pause))
 
-# CLASS FOR NOT PLAYER CHARACTERS, WHICH POP UP AT CERTAIN EVENTS AND STEAL COOKIES 
+# CLASS FOR NOT PLAYER CHARACTERS, WHICH POP UP AT CERTAIN EVENTS AND ACTIVATES A DEBUFF CARD
 class NPC():
     # INITIAL SETUP OF NPC
     def __init__(self, text, NPC_pic_in, NPC_pic_out, sound, sound_volume):
@@ -526,14 +529,14 @@ class GoldenCookie():
     # COOKIE BOOST FROM GOLDEN COOKIE
     def boost(self):
         if self.boost_status == True:
+            # START BOOST
             if total_frames_drawn == self.boost_starting_frame:
-                # START BOOST
                 cookie.image = oreo
                 user.cph_multiplier = 2
-                self.boost_duration = FPS * 30
+                self.boost_duration = FPS * 5
                 user.updateTotalCPH()
+            # MILK ANIMATION
             elif total_frames_drawn < (self.boost_starting_frame+self.boost_duration):
-                # MILK ANIMATION
                 milk_scaled = pygame.transform.scale(milk, (milk_width+10, milk_width/4*3))
                 global milk_pos
                 for i in range(milk_build):
@@ -541,8 +544,8 @@ class GoldenCookie():
                         milk_pos = (0, milk_pos[1])
                     x_pos_milk = milk_pos[0] + (i-1)*milk_width
                     window.blit(milk_scaled, (x_pos_milk - 5, (current_window_height - milk_scaled.get_height())))
+            # END BOOST
             elif total_frames_drawn == (self.boost_starting_frame+self.boost_duration):
-                # END BOOST
                 cookie.image = cookie_img
                 user.cph_multiplier = 1
                 user.updateTotalCPH()
