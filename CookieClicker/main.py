@@ -1,3 +1,4 @@
+############################ PREPERATION SECTION ############################
 # IMPORT LIBRARIES
 import pygame
 import sys
@@ -21,9 +22,9 @@ vapor_logo = pygame.image.load('CookieClicker/images/vapor_logo.png')
 cum_inc_logo = pygame.image.load('CookieClicker/images/cum_inc_logo.png')
 background_img = pygame.image.load('CookieClicker/images/cookie_clicker_background.png')
 store_background_img = pygame.image.load('CookieClicker/images/cookie_clicker_store_background.png')
+oreo = pygame.image.load('CookieClicker/images/oreo.png')
 cookie_img = pygame.image.load('CookieClicker/images/cookie.png')
 upgrades_bg = pygame.image.load('CookieClicker/images/black.jpg')
-leiste = pygame.image.load('CookieClicker/images/leiste.png')
 audio_play_img = pygame.image.load('CookieClicker/images/play.png')
 audio_pause_img = pygame.image.load('CookieClicker/images/pause.png')
 npc_dialog_black = pygame.image.load('CookieClicker/images/black2.png')
@@ -60,7 +61,6 @@ GREEN = (198, 134, 123)
 BLUE = (51, 60, 75)
 
 # STANDARD CURSOR SETUP
-#
 # import img
 custom_default_cursor_img = pygame.image.load('CookieClicker/images/custom_default_cursor.png')
 # scale img
@@ -78,24 +78,27 @@ pygame.display.set_caption(template.format(CAPTION, version.capitalize()))
 # SETUP WINDOW ICON
 pygame.display.set_icon(cookie_img)
 
+############################ CLASS SECTION ############################
+# CLASS FOR THE BIG CLICKABLE COOKIE
 class MainCookie:
     # INITIAL SETUP OF COOKIE
-    def __init__(self, x_pos_cookie, y_pos_cookie, x_size_cookie):
+    def __init__(self):
         self.animation_state = 0
         self.hit = False
         self.starting_frame = 0
+        self.image = cookie_img
 
     # DRAW COOKIE
     def draw(self):
-        # ANIMATINION STATES
-        # while hit
+        # ANIMATINION STATES CHANGE OF COOKIE SIZE
+        # when hit
         if self.animation_state > 0:
-            cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1.1*x_size_cookie), int(1.1*x_size_cookie) ))
+            cookie_img_scaled = pygame.transform.scale(self.image, ( int(1.1*x_size_cookie), int(1.1*x_size_cookie) ))
             window.blit(cookie_img_scaled, (cookie_img_scaled.get_rect(center =( x_pos_cookie, y_pos_cookie) )))
             self.animation_state -= 1
         # default
         else:
-            cookie_img_scaled = pygame.transform.scale(cookie_img, ( int(1*x_size_cookie), int(1*x_size_cookie) ))
+            cookie_img_scaled = pygame.transform.scale(self.image, ( int(1*x_size_cookie), int(1*x_size_cookie) ))
             window.blit(cookie_img_scaled, (cookie_img_scaled.get_rect(center =( x_pos_cookie, y_pos_cookie) )))
 
     # DEFINING COLLIDER / HITBOX
@@ -110,7 +113,9 @@ class MainCookie:
         if distance <= (x_size_cookie*0.48):
             return True
 
+#CLASS FOR ANIMATON OF SMALL COOKIES AND NUMBERS WENN THE BIG COOKIE IS CLICKED
 class CookieHitAnimation:
+    # INITIAL SETUP
     def __init__(self):
         self.starting_frame = total_frames_drawn
         self.hit_location = pygame.mouse.get_pos()
@@ -119,6 +124,7 @@ class CookieHitAnimation:
         self.hit_opacity = 255
         self.font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', int(current_window_height*0.03))
 
+    # DRAWS THE ANIMATION
     def animate(self):
         if total_frames_drawn < (self.starting_frame + FPS * 0.3):
             if total_frames_drawn != self.starting_frame:
@@ -132,14 +138,17 @@ class CookieHitAnimation:
             CPH = self.font.render('+{}'.format(format_number ( user.cph)), True, WHITE)
             CPH.set_alpha(self.hit_opacity)
             window.blit(CPH, (CPH.get_rect(center=(int(self.hit_location[0])+int(current_window_height*0.03)*0.3, int(self.hit_location[1])+int(current_window_height*0.03)*0.3 ) )))
-        
+
+# CLASS FOR THE DISPLAY OF THE COOKIE SCORE AND COOKIES PER SECOND    
 class ScoreDisplay():
+    # INITIAL SETUP
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.length = 100
         self.height = 100
 
+    # DRAWS THE DISPLAY 
     def draw(self, x_pos_score, y_pos_score):
         font = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 24)
         small_font = pygame.font.Font('CookieClicker/Font/Kavoon-Regular.ttf', 26)
@@ -148,6 +157,8 @@ class ScoreDisplay():
         CPS = font.render('per second: {}'.format(format_number ( user.cps)), True, WHITE)
         window.blit(SCORE, (SCORE.get_rect( center=( int(x_pos_score), int(y_pos_score) ) )))
         window.blit(CPS, (CPS.get_rect(center=(int(x_pos_score), int(y_pos_score)+20 ) )))
+
+# CASS FOR THE CARDS OF THE SHOP, WHICH ADD COOKIES PER SECOND
 class Card:
     # INITIAL STATIC SETUP OF CARD (TEMPORARILY)
     def __init__(self, name, index_x, index_y, image, base_cost, increase_per_purchase, cps, sound):
@@ -214,6 +225,7 @@ class Card:
     def upgradeSound(self):
         pygame.mixer.Sound.play(self.sound, 0)
 
+# CLASS FOR THE CURSORS OF THE CURSOR SHOP, ABOVE THE CARDS SHOP, WHICH ADD COOKIES PER HIT
 class Cursor:
     # INITIAL SETUP OF CURSOR
     def __init__(self, name, index_x, index_y, image, cost, cph, condition_id, sound):
@@ -289,6 +301,34 @@ class Cursor:
     def hitSound(self):
         pygame.mixer.Sound.play(self.sound, 0)
 
+class Debuff:
+    # INITIAL SETUP OF DEBUFF
+    def __init__(self, name, image, score_reduce, cps_reduce, cph_reduce, sound):
+        self.name = name
+        self.length = 200
+        self.height = 280
+
+        self.sound = sound
+
+        self.image = pygame.transform.scale(image, (self.length, self.height))
+        self.score_reduce = score_reduce
+        self.cps_reduce = cps_reduce
+        self.cph_reduce = cph_reduce
+
+        self.max_card_count = 100
+
+        self.quantity = 0
+        self.created = 0
+
+    def reduce(self):
+        user.score -= self.score_reduce
+        user.cps -= self.cps_reduce
+        user.cph -= self.cph_reduce
+    
+    def draw(self):
+        window.blit(self.image, (current_window_width*0.6, current_window_height*0.5))
+
+# CLASS FOR PLAYER STATISTICS  (COOKIE SCORE, CLICKS PER SECOND, COOKIES PER HIT)
 class Player:
     # INITIAL SETUP OF PLAYER
     def __init__(self):
@@ -298,6 +338,8 @@ class Player:
         self.cps = float(0)
         # cookies per hit (MANUALLY GENERATED COOKIES)
         self.cph = 1
+        self.cph_multiplier = 1
+        self.total_cph = self.cph * self.cph_multiplier
 
     #  UPDATE THE TOTAL CLICKS-PER-SECOND
     def updateTotalCPS(self, list_of_cards):
@@ -305,12 +347,14 @@ class Player:
         for card in list_of_cards:
             self.cps += card.cps * card.quantity
     
-    #  UPDATE THE TOTAL CLICKS-PER-SECOND
+    #  UPDATE THE TOTAL CLICKS-PER-HIT
     def updateTotalCPH(self, list_of_cursors):
         self.cph = 0
         for card in list_of_cursors:
             self.cph += card.cph * card.quantity
+        self.total_cph = self.cph * self.cph_multiplier
 
+# CLASS FOR THE BACKGROUND MUSIC
 class Music():
     # INITIAL SETUP OF MUSIC PLAYER
     def __init__(self):        
@@ -332,6 +376,7 @@ class Music():
         else:
             window.blit(audio_pause_img_scaled, (x_pos_music_play_pause, y_pos_music_play_pause))
 
+# CLASS FOR NOT PLAYER CHARACTERS, WHICH POP UP AT CERTAIN EVENTS AND STEAL COOKIES 
 class NPC():
     # INITIAL SETUP OF NPC
     def __init__(self, text, NPC_pic_in, NPC_pic_out, sound, sound_volume):
@@ -353,6 +398,7 @@ class NPC():
 
     # DRAW NPC DIALOG WINDOW IN ANIMATION TO FRAME
     def draw(self):
+        # load and scale images and text
         self.display_dialog_speed = current_window_height * 0.02
 
         npc_dialog_black_scaled = pygame.transform.scale(npc_dialog_black, (x_pos_leiste, npc_dialog_height))
@@ -365,6 +411,7 @@ class NPC():
         dialog_text = pygame.font.Font('CookieClicker/Font/SemiSweet-Bold-italic.ttf', 20)
         dialog_text_rendert = dialog_text.render(self.text, True, (255, 255, 255))
 
+        # ANIMATES THE WINDOW POPING UP
         if self.NPC_pop == True:
             if not self.counter >= int(y_pos_npc_dialog * 0.5) or self.counter == 0:
                 self.counter += self.display_dialog_speed
@@ -382,10 +429,14 @@ class NPC():
                 window.blit(npc_dialog_white_bottom, (x_pos_leiste - 15, current_window_height - self.counter))
                 window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height + npc_dialog_text_pos - self.counter))))
 
+        # KEEPS THE WINDOW IN THE POPED POSITON
         if self.NPC_pop_stay == True:
             if self.time == 0 and self.sound != None:
                 pygame.mixer.Sound.set_volume(self.sound, self.NPC_audio_volume)
                 pygame.mixer.Sound.play(self.sound, 1)
+                selector = (random.randint(1, len(list_of_debuffs)-1))
+                print(selector)
+                self.debuff = list_of_debuffs[selector]
 
             window.blit(npc_in, (0, y_pos_npc_dialog * 0.5))
             window.blit(npc_dialog_black_scaled, (0, y_pos_npc_dialog))
@@ -393,7 +444,9 @@ class NPC():
             window.blit(npc_dialog_white_bottom, (x_pos_leiste - 15, y_pos_npc_dialog))
             window.blit(dialog_text_rendert, (dialog_text_rendert.get_rect(center =(x_pos_leiste/2, current_window_height - npc_dialog_text_pos))))
             self.time += Clock.get_time()
+            self.debuff.draw()
 
+        # ANIMATES THE WINDOW POPING DOWN
         if self.NPC_pop_return == True:
             self.NPC_pop_stay = False
             if not self.counter >= int(y_pos_npc_dialog * 0.5):
@@ -413,7 +466,9 @@ class NPC():
             self.NPC_pop_return = True
             self.once_activ = True
 
-class Jumpscare ():
+# CLASS FOR JUMPSCARES AT CERTAIN EVENTS
+class Jumpscare():
+    # INITIAL SETUP OF JUMPSCARE
     def __init__(self, pic, time_shown, sound, volume):
         self.action = False
         self.jumpscare_pic = pic
@@ -424,6 +479,7 @@ class Jumpscare ():
         self.once_activ = False
         self.timer = 0
 
+    # DRAWS JUMPSCARE ON TOP OF THE SCREEN AND PLAYS SOUND
     def draw(self):
         jumpscare_pic_scaled = pygame.transform.scale(self.jumpscare_pic, (current_window_height, current_window_height))
 
@@ -435,16 +491,24 @@ class Jumpscare ():
                 pygame.mixer.Sound.play(self.sound, 0)
                 self.once_activ = True
 
-class golden_cookie ():
+# CLASS FOR THE GOLDEN COOKIE, WHICH FALLS DOWN AT REANDOM POSITONS OF THE SCREEN. IT CAN BE CLICKED TO OPTAIN COOKIES
+class GoldenCookie():
+    # INITIAL SETUP OF JUMPSCARE
     def __init__(self):
         self.action = False
         self.random_pos = 0
         self.random_speed = 0
         self.counter = 0
 
+        self.boost_starting_frame = 0
+        self.boost_status = False
+        self.boost_duration = FPS * 30
+        
+    # DEFINING COLLIDER / HITBOX
     def collidepoint(self, mouse_pos):
         return pygame.Rect(self.random_pos, self.counter, x_size_cookie*0.1, x_size_cookie*0.1).collidepoint(mouse_pos)
 
+    # DRAW THE GOLDEN COOKIE IN AN ANIMATION FALLING FROM THE TOP OF THE DISPLAY TO THE BOTTOM
     def draw(self):
         golden_cookie_scaled = pygame.transform.scale(golden_cookie_pic, (x_size_cookie*0.1, x_size_cookie*0.1))
 
@@ -457,8 +521,28 @@ class golden_cookie ():
             self.counter = 0
             self.action = False
 
+    def boost(self):
+        if self.boost_status == True:
+            if total_frames_drawn == self.boost_starting_frame:
+                cookie.image = oreo
+                user.cph_multiplier = 2
+            elif total_frames_drawn < (self.boost_starting_frame+self.boost_duration):
+                # MILK ANIMATION
+                milk_scaled = pygame.transform.scale(milk, (milk_width+10, milk_width/4*3))
+                global milk_pos
+                for i in range(milk_build):
+                    if (milk_pos[0] + i*milk_width) >= x_pos_leiste+milk_width:
+                        milk_pos = (0, milk_pos[1])
+                    x_pos_milk = milk_pos[0] + (i-1)*milk_width
+                    window.blit(milk_scaled, (x_pos_milk - 5, (current_window_height - milk_scaled.get_height())))
+            elif total_frames_drawn == (self.boost_starting_frame+self.boost_duration):
+                cookie.image = cookie_img
+                user.cph_multiplier = 1
+                self.boost_status = False
+                
+############################ OBJEKT SECTION ############################
 # SETUP COOKIE (ONLY TEMPORARY VALUES FOR POSITION AND SIZE)
-cookie = MainCookie(300, 240, 200)
+cookie = MainCookie()
 
 # SETUP SCORE-BOARD (ONLY TEMPORARY VALUES FOR POSITION AND SIZE)
 score_display = ScoreDisplay(360, 0)
@@ -477,94 +561,113 @@ shrek_cookie = NPC("Eyyyy what are you doing? You can not use those!", npc_shrek
 cookie_scream = Jumpscare(jumpscare_cookie, 200, jumpscare_cookie_scream, 1)
 
 # SETUP GOLDEN_COOKIE
-golden_cookie_objekt = golden_cookie()
+golden_cookie = GoldenCookie()
 
 # SET UPGRADE-STORE POSITION (ONLY TEMPORARY VALUES)
 store_y = 20
 store_x = 830
 
-# CREATE CARDS FROM CLASS
+# SETUP CARDS
 # create list
 list_of_cards = []
 ########################################################################
 # ROW1 : get image
-# ROW2 : create card from class, set values
+# ROW2 : create object from class, set values
 # ROW3 : append to list
 ########################################################################
-# NORMAL CARDS
+# slave card
 card_slaves_img = pygame.image.load('CookieClicker/images/card_slaves.png')
 card_slaves = Card("Slaves", 0, 0 , card_slaves_img, base_cost=15, increase_per_purchase=1.15, cps=0.1, sound=upgrade_sound)
 list_of_cards.append(card_slaves)
-
+# turbo card
 card_turbo_img = pygame.image.load('CookieClicker/images/card_turbo.png')
 card_turbo = Card("Turbo", 0, 0 , card_turbo_img, base_cost=100, increase_per_purchase=1.15, cps=1, sound=upgrade_sound)
 list_of_cards.append(card_turbo)
-
+#chump hat card
 card_chump_hat_img = pygame.image.load('CookieClicker/images/card_chump_hat.png')
 card_chump_hat = Card("Chump Hat", 0, 0 , card_chump_hat_img, base_cost=1100, increase_per_purchase=1.15, cps=8, sound=upgrade_sound)
 list_of_cards.append(card_chump_hat)
-
+# nuclearreactr card
 card_nuclearreactor_img = pygame.image.load('CookieClicker/images/card_nuclearreactor.png')
 card_nuclearreactor = Card("Nuclear Reactor", 0, 0 , card_nuclearreactor_img, base_cost=12000, increase_per_purchase=1.15, cps=47, sound=upgrade_sound)
 list_of_cards.append(card_nuclearreactor)
-
+# nestle card
 card_nestle_img = pygame.image.load('CookieClicker/images/card_nestle.png')
 card_nestle = Card("Nestle", 0, 0 , card_nestle_img, base_cost=130000, increase_per_purchase=1.15, cps=260, sound=upgrade_sound)
 list_of_cards.append(card_nestle)
-
+# oil card
 card_oil_img = pygame.image.load('CookieClicker/images/card_oil.png')
 card_oil = Card("Oil", 0, 0 , card_oil_img, base_cost=1400000, increase_per_purchase=1.15, cps=1400, sound=upgrade_sound)
 list_of_cards.append(card_oil)
-
+# cookie collector card
 card_cookie_collector_img = pygame.image.load('CookieClicker/images/card_cookie_collector.png')
 card_cookie_collector = Card("Cookie Collector", 0, 0 , card_cookie_collector_img, base_cost=20000000, increase_per_purchase=1.15, cps=7800, sound=elixir)
 list_of_cards.append(card_cookie_collector)
-
+# cookie drill card
 card_cookie_drill_img = pygame.image.load('CookieClicker/images/card_cookie_drill.png')
 card_cookie_drill = Card("Cookie Drill", 0, 0 , card_cookie_drill_img, base_cost=330000000, increase_per_purchase=1.15, cps=44000, sound=elixir)
 list_of_cards.append(card_cookie_drill)
-
+# cookie mine card
 card_cookie_mine_img = pygame.image.load('CookieClicker/images/card_cookie_mine.png')
 card_cookie_mine = Card("Cookie Mine", 0, 0 , card_cookie_mine_img, base_cost=5100000000, increase_per_purchase=1.15, cps=260000, sound=elixir)
 list_of_cards.append(card_cookie_mine)
-
+# hog rider card
 card_hog_rider_img = pygame.image.load('CookieClicker/images/card_hog_rider.png')
 card_hog_rider = Card("Hog Rider", 0, 0 , card_hog_rider_img, base_cost=75000000000, increase_per_purchase=1.15, cps=5000000, sound=hog_rider)
 list_of_cards.append(card_hog_rider)
-########################################################################
+
+# SETUP CURSORS
+# create list
 list_of_cursors = []
-# CURSORS
+###########################################
+# ROW1 : get image
+# ROW2 : create cursor from class, set values
+# ROW3 : append to list
+############################################
+# wooden pickaxe cursor
 cursor_wooden_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_wooden_pickaxe.png')
 cursor_wooden_pickaxe = Cursor("Wooden Pickaxe", 0, 0 , cursor_wooden_pickaxe_img, cost=100, cph=2, condition_id=0, sound=key_press)
 list_of_cursors.append(cursor_wooden_pickaxe)
-
+# golden pickaxe cursor
 cursor_golden_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_golden_pickaxe.png')
 cursor_golden_pickaxe = Cursor("Golden Pickaxe", 0, 0 , cursor_golden_pickaxe_img, cost=500, cph=8, condition_id=1, sound=key_press)
 list_of_cursors.append(cursor_golden_pickaxe)
-
+# diamond pickaxe cursor
 cursor_diamond_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_diamond_pickaxe.png')
 cursor_diamond_pickaxe = Cursor("Diamond Pickaxe", 0, 0 , cursor_diamond_pickaxe_img, cost=10000, cph=69, condition_id=2, sound=key_press)
 list_of_cursors.append(cursor_diamond_pickaxe)
-
+# netherite pickaxe cursor
 cursor_netherite_pickaxe_img = pygame.image.load('CookieClicker/images/cursor_netherite_pickaxe.png')
 cursor_netherite_pickaxe = Cursor("Netherite Pickaxe", 0, 0 , cursor_netherite_pickaxe_img, cost=1000000, cph=112, condition_id=3, sound=key_press)
 list_of_cursors.append(cursor_netherite_pickaxe)
-
+# scope cursor
 cursor_scope_img = pygame.image.load('CookieClicker/images/scope.png')
 cursor_scope = Cursor("AWM", 0, 0 , cursor_scope_img, cost=10000000, cph=1000, condition_id=4, sound=awm)
 list_of_cursors.append(cursor_scope)
-########################################################################
-# DEBUFFS
+
+
+# SETUP DEBUFFS
+# create list
+list_of_debuffs = []
+###########################################
+# ROW1 : get image
+# ROW2 : create debuff from class, set values
+# ROW3 : append to list
+############################################
+# bad code debuff
 card_bad_code_img = pygame.image.load('CookieClicker/images/card_bad_code.png')
-card_bad_code = Card("Bad Code", 0, 0 , card_bad_code_img, base_cost=15, increase_per_purchase=1.15, cps=1, sound=upgrade_sound)
-# CURRENTLY NOT IMPLEMENTED
-# list_of_cards.append(card_bad_code)
-
+card_bad_code = Debuff("Bad Code", card_bad_code_img, score_reduce=1, cps_reduce=1, cph_reduce=1, sound=upgrade_sound)
+list_of_debuffs.append(card_bad_code)
+# teachers dream debuff
 card_teachers_dream_img = pygame.image.load('CookieClicker/images/card_teachers_dream.png')
-card_teachers_dream = Card("Teachers Dream", 0, 0 , card_teachers_dream_img, base_cost=15, increase_per_purchase=1.15, cps=1, sound=upgrade_sound)
-# CURRENTLY NOT IMPLEMENTED
-# list_of_cards.append(card_teachers_dream)
+card_teachers_dream = Debuff("Teachers Dream", card_teachers_dream_img, score_reduce=1, cps_reduce=1, cph_reduce=1, sound=upgrade_sound)
+list_of_debuffs.append(card_teachers_dream)
+# math debuff
+card_math_img = pygame.image.load('CookieClicker/images/card_math.png')
+card_math = Debuff("Math", card_math_img, score_reduce=1, cps_reduce=1, cph_reduce=1, sound=upgrade_sound)
+list_of_debuffs.append(card_math)
 
+############################ FUNKTION SECTION ############################
 # FUNCTION TO FORMAT NUMBERS INTO TEXT
 def format_number(n):
     n = round(float(n), 2)
@@ -600,6 +703,7 @@ def format_number(n):
             n = '{:.2f} k'.format(n / 1000)
     return n
 
+# FUNCTION TO GENERATE A RANDOM VARIABLE NAME
 def generate_random_variable_name(length=8):
     letters = string.ascii_letters
     return ''.join(random.choice(letters) for i in range(length))
@@ -620,40 +724,38 @@ def draw():
     # BACKGROUND
     window.blit(background_img_scaled, (0,0))
 
-    # MILK ANIMATION
-    milk_scaled = pygame.transform.scale(milk, (milk_width+10, milk_width/4*3))
-    global milk_pos
-    for i in range(milk_build):
-        if (milk_pos[0] + i*milk_width) >= x_pos_leiste+milk_width:
-            milk_pos = (0, milk_pos[1])
-        x_pos_milk = milk_pos[0] + (i-1)*milk_width
-        window.blit(milk_scaled, (x_pos_milk - 5, (current_window_height - milk_scaled.get_height())))
+    # MILK ANIMATION AND CPH BOOST
+    golden_cookie.boost()
 
     # COOKIE
     cookie.draw()
 
+    # DRAW COOKIE HIT ANIMATION
     global new_cookie_animation
+    # check for event start
     if new_cookie_animation == True:
+        # generate random name
         random_variable_name = generate_random_variable_name()
+        # create variable from class
         globals()[random_variable_name] = CookieHitAnimation()
+        # append to list
         animated_cookies.append(globals()[random_variable_name])
+        # reset event
         new_cookie_animation = False
+    # check for animations
     if len(animated_cookies) != 0:
+        # draw animations from list
         for animation_id in range(len(animated_cookies)):
             animated_cookies[animation_id].animate()
 
     #GOLDEN COOKIE
-    golden_cookie_objekt.draw()
+    golden_cookie.draw()
 
     # SCORE BOARD
     score_display.draw(x_pos_score, y_pos_score)
 
     # MUSIC CONTROL
     theme.draw()
-
-    # NPC
-    cookie_monster.draw()
-    shrek_cookie.draw()
 
     # STORE BACKGROUND
     window.blit(store_background_img_scaled, (x_pos_upgradeBackground, 0))
@@ -698,6 +800,10 @@ def draw():
     window.blit(wooden_bar_vertical_scaled, (x_pos_leiste, 0))
     window.blit(wooden_bar_horizontal_scaled, (x_pos_leiste + wooden_bar_width, y_pos_store_divider))
 
+    # NPC
+    cookie_monster.draw()
+    shrek_cookie.draw()
+
     # JUMPSCARE
     cookie_scream.draw()
 
@@ -715,16 +821,20 @@ def drawIntro():
     intro_background.fill((0, 0, 0))
     window.blit(intro_background, (0, 0))
 
+    # DRAW VAPOR LOGO
     if total_frames_drawn < (FPS * 5):
-        # DRAW VAPOR LOGO
         vapor_logo_scaled = pygame.transform.scale(vapor_logo, (current_window_width * 0.1, current_window_width * 0.1))
         window.blit(vapor_logo_scaled, (current_window_center[0] - vapor_logo_scaled.get_width()/2, current_window_center[1] - vapor_logo_scaled.get_height()/2))
+
+    #DRAW CUM INC LOGO 
     elif total_frames_drawn < (FPS * 10):
         cum_inc_logo_scaled = pygame.transform.scale(cum_inc_logo, (current_window_width * 0.1, current_window_width * 0.1))
         logo_background = pygame.Surface((cum_inc_logo_scaled.get_width(), cum_inc_logo_scaled.get_height()))
         logo_background.fill((255, 255, 255))
         window.blit(logo_background, (current_window_center[0] - cum_inc_logo_scaled.get_width()/2, current_window_center[1] - cum_inc_logo_scaled.get_height()/2))
         window.blit(cum_inc_logo_scaled, (current_window_center[0] - cum_inc_logo_scaled.get_width()/2, current_window_center[1] - cum_inc_logo_scaled.get_height()/2))
+    
+    #DRAW TITLE
     elif total_frames_drawn < (FPS * 15):
         main_title = pygame.font.Font(None, 40)
         secondary_title = pygame.font.Font(None, 20)
@@ -733,6 +843,8 @@ def drawIntro():
         
         window.blit(main_title_surface, (current_window_center[0] - main_title_surface.get_width()/2, current_window_center[1] - main_title_surface.get_height()))
         window.blit(secondary_title_surface, (current_window_center[0] - secondary_title_surface.get_width()/2, current_window_center[1] + secondary_title_surface.get_height()))
+    
+    #DRAW MUSICIAN
     elif total_frames_drawn < (FPS * 17):
         main_title = pygame.font.Font(None, 40)
         secondary_title = pygame.font.Font(None, 20)
@@ -741,6 +853,8 @@ def drawIntro():
         
         window.blit(main_title_surface, (current_window_center[0] - main_title_surface.get_width()/2, current_window_center[1] - main_title_surface.get_height()))
         window.blit(secondary_title_surface, (current_window_center[0] - secondary_title_surface.get_width()/2, current_window_center[1] + secondary_title_surface.get_height()))
+    
+    #DRAW KEYMAP
     else:
         main_title = pygame.font.Font(None, 40)
         secondary_title = pygame.font.Font(None, 20)
@@ -760,8 +874,8 @@ def drawIntro():
     # UPDATE FRAME
     pygame.display.update()
 
+# FUNKTION TO CREATE GLOBAL VARIABLES FOR DYNAMIC LAYOUT
 def createVariables(current_window_width, current_window_height, set_width_to_two):
-    # CREATING GLOBAL VARIABLES FOR DYNAMIC LAYOUT
     global card_length
     card_length = 200
     global card_height
@@ -852,8 +966,17 @@ pygame.mixer.Sound.set_volume(hog_rider, 0.3)
 pygame.mixer.Sound.set_volume(upgrade_sound, 1)
 pygame.mixer.Sound.set_volume(golden_cookie_sound, 1)
 
+############################ MAIN LOOP SECTION ############################
 # SETUP MAIN-LOOP
 main = True
+
+global intro_music
+intro_music = False
+global main_music
+main_music = False
+global intro
+intro = False
+
 FPS = 60
 Clock = pygame.time.Clock()
 global relative_scroll
@@ -865,12 +988,6 @@ data = False
 music = False
 global total_frames_drawn
 total_frames_drawn = 0
-global intro_music
-intro_music = False
-global main_music
-main_music = False
-global intro
-intro = False
 global current_cursor
 current_cursor = -1
 global milk_pos
@@ -896,9 +1013,7 @@ while main == True:
         set_width_to_two = "TRUE"
         createVariables(current_window_width, current_window_height, set_width_to_two)
 
-    # DRAW FRAME
-    #
-    # intro
+    # INTRO
     if total_frames_drawn < (FPS * 30) and intro == True:
         # START MUSIC
         if intro_music == False:
@@ -915,7 +1030,7 @@ while main == True:
 
         # DRAW FRAME
         drawIntro()
-    # game
+    # GAME
     else:
         # SRART MUSIC
         if main_music == False:
@@ -933,18 +1048,18 @@ while main == True:
                         list_of_cursors[current_cursor].hitSound()
                     else:
                         hitSound()
-                    user.score += user.cph
+                    user.score += user.total_cph
                     cookie.animation_state = 1
                     cookie.hit = True
                     cookie.starting_frame = total_frames_drawn
                     new_cookie_animation = True
                 
                 # HIT GOLDEN COOKIE
-                if golden_cookie_objekt.collidepoint(mouse_pos):
-                    user.score += user.score
+                if golden_cookie.collidepoint(mouse_pos):
+                    golden_cookie.boost_status = True
                     pygame.mixer.Sound.set_volume(golden_cookie_sound, 1)
                     pygame.mixer.Sound.play(golden_cookie_sound, 0)
-                    golden_cookie_objekt.action = False
+                    golden_cookie.action = False
 
                 # HIT CURSOR CARD
                 cursor_id = 0
@@ -992,8 +1107,11 @@ while main == True:
                     data = False
                 else:
                     data = True
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_x:
+                user.score += 1000000
             
-            # MUTE AUDIO
+            # MUTE AUDIO Per "M" KEY
             if event.type == pygame.KEYDOWN and event.key == pygame.K_m and music == True:
                 pygame.mixer.music.pause()
                 theme.play = False
@@ -1007,7 +1125,7 @@ while main == True:
             if event.type == pygame.QUIT:
                 main = False
         
-        # DRAW NPC
+        # DRAW NPC UNDER CONDITION
         if user.cps >= 100 and cookie_monster.was_activ == False:
             cookie_monster.NPC_pop = True
             cookie_monster.was_activ = True
@@ -1016,26 +1134,25 @@ while main == True:
             shrek_cookie.NPC_pop = True
             shrek_cookie.was_activ = True
 
-        # DRAW JUMPSCARE
+        # DRAW JUMPSCARE UNDER CONDITION
         if user.cps > 666:
             cookie_scream.action = True
 
-        # DRAW GOLDEN_COOKIE
+        # DRAW GOLDEN_COOKIE AND DEFINE FREQUENCY
         if random.randint(0, 1000) == 1:
-            golden_cookie_objekt.action = True
+            golden_cookie.action = True
                 
         # DRAW NEW FRAME
         draw()
     
+    #?
     if data == True:
         print(pygame.mouse.get_pos(), relative_scroll)
 
-    # CLEAR EVENT QUEUE (INACTIVE DUE TO READOUT ERROR)
-    # pygame.event.clear()
-
     # TOTAL FRAMES DRAWN
     total_frames_drawn +=1
-
+    
+    #?
     high_score_file_read = open("CookieClicker/files/highscore.txt", "r")
     if float(high_score_file_read.read()) < user.score:
         high_score_file_write = open("CookieClicker/files/highscore.txt", "w")
