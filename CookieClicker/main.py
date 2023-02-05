@@ -994,7 +994,7 @@ intro_music = False
 global main_music
 main_music = False
 global intro
-intro = False
+intro = True
 
 # INITIAL VARIABLE SETUP
 FPS = 60
